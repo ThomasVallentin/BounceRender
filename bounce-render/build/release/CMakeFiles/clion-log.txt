@@ -1,6 +1,0 @@
-/usr/local/bin/cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" /tmp/Bounce
--- Found ZLIB: /usr/lib64/libz.so (found version "1.2.7") 
--- Found ZLIB: /usr/lib64/libz.so (found suitable version "1.2.7", minimum required is "1.2.7") 
--- Configuring done
--- Generating done
--- Build files have been written to: /tmp/Bounce/build/release

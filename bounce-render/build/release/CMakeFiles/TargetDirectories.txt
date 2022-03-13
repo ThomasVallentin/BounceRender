@@ -1,3 +1,0 @@
-/tmp/Bounce/build/release/CMakeFiles/rebuild_cache.dir
-/tmp/Bounce/build/release/CMakeFiles/edit_cache.dir
-/tmp/Bounce/build/release/CMakeFiles/Bounce.dir

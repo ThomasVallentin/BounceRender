@@ -1,19 +1,38 @@
-cmake_minimum_required(VERSION 3.19)
-project(LearnOpenGL)
+cmake_minimum_required(VERSION 3.15)
 
-set(glfw3_DIR /usr/local/lib/cmake/glfw)
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-## Find dependencies
-find_package(glfw3 3.1.2 REQUIRED)
-set(GFLW_DEPENDENCIES dl X11 Xi Xcursor Xinerama Xrandr Xxf86vm pthread)
-
-find_package(glew REQUIRED)
+# OpenGL packages
+find_package(GLAD REQUIRED)
+find_package(GLFW REQUIRED)
+find_package(ImGui REQUIRED)
 find_package(OpenGL REQUIRED)
-#find_package(imgui REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem)
+find_package(OpenImageIO REQUIRED)
 
-# Add bounce-render target and link its includes & libraries
-add_executable(BounceGUI main.cpp)
-target_include_directories(BounceGUI PRIVATE ${GLFW3_INCLUDE_DIR} src)
-target_link_libraries(BounceGUI PUBLIC glfw3 GLEW::GLEW ${GFLW_DEPENDENCIES}
-#        imgui::imgui
-)
+message(${OpenImageIO_FOUND})
+
+set(BounceGui_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+file(GLOB_RECURSE BounceGui_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+
+add_executable(BounceGUI main.cpp
+        ${BounceGui_SOURCES}
+        ${ImGui_SOURCES} src/App/Events/ApplicationEvent.h src/App/Events/KeyEvent.h)
+target_include_directories(BounceGUI PUBLIC
+        BounceRender
+        C:/dev/BounceRender/dependencies/boost_1_76_0/stage/x64/lib/libboost_filesystem-vc142-mt-gd-x64-1_76.lib
+        Boost::filesystem
+        OpenImageIO::OpenImageIO
+        ${BounceGui_INCLUDE_DIR}
+        ${GLFW_INCLUDE_DIR}
+        ${GLAD_INCLUDE_DIR}
+        ${ImGui_INCLUDE_DIR}
+        OpenGL::GL)
+target_link_libraries(BounceGUI PUBLIC
+        BounceRender
+        C:/dev/BounceRender/dependencies/boost_1_76_0/stage/x64/lib/libboost_filesystem-vc142-mt-gd-x64-1_76.lib
+        Boost::filesystem
+        OpenImageIO::OpenImageIO
+        ${GLFW_LIBRARY}
+        ${GLAD_LIBRARIES}
+        OpenGL::GL)

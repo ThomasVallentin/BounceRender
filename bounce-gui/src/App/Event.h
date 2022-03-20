@@ -2,8 +2,8 @@
 // Created by Thomas Vallentin on 17/03/2022.
 //
 
-#ifndef BOUNCE_EVENT_H
-#define BOUNCE_EVENT_H
+#ifndef BOUNCE_GUI_EVENT_H
+#define BOUNCE_GUI_EVENT_H
 
 #include <iostream>
 #include <functional>
@@ -48,6 +48,17 @@ namespace Bounce::Gui {
 
     // TODO(tvallentin): Events are handled directly instead of being processed through a queue/stack.
     //                   This needs to be improved later.
+    // Class mande to dispatch events in Layer::OnEvent reimplementations. Use it like so :
+    // void Layer::OnEvent(Event &event) {
+    //     EventDispatcher dispatcher(event);
+    //     dispatcher.Dispatch<SomeEventClass>(BIND_EVENT_FUNC(RenderLayer::OnASpecificEventClass));
+    // }
+    //
+    // bool RenderLayer::OnASpecificEventClass(SomeEventClass &event) {
+    //     <insert your code here>
+    //     return true/false (whether the callback handled the event or if it will be propagated
+    //                        across the next layers of the layerstack);
+    // }
     class EventDispatcher {
         template<typename T>
         using EventFn = std::function<bool(T&)>;
@@ -81,4 +92,4 @@ namespace Bounce::Gui {
 }
 
 
-#endif //BOUNCE_EVENT_H
+#endif //BOUNCE_GUI_EVENT_H

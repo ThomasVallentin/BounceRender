@@ -2,8 +2,8 @@
 // Created by Thomas Vallentin on 17/03/2022.
 //
 
-#ifndef BOUNCE_IMGUILAYER_H
-#define BOUNCE_IMGUILAYER_H
+#ifndef BOUNCE_GUI_IMGUILAYER_H
+#define BOUNCE_GUI_IMGUILAYER_H
 
 #include "App/Layer.h"
 #include "App/Events/ApplicationEvent.h"
@@ -26,4 +26,4 @@ namespace Bounce::Gui {
 
 
 
-#endif //BOUNCE_IMGUILAYER_H
+#endif //BOUNCE_GUI_IMGUILAYER_H

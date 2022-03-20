@@ -17,7 +17,7 @@ file(GLOB_RECURSE BounceGui_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
 add_executable(BounceGUI main.cpp
         ${BounceGui_SOURCES}
-        ${ImGui_SOURCES} src/App/Events/ApplicationEvent.h src/App/Events/KeyEvent.h)
+        ${ImGui_SOURCES} src/App/Backends/OpenGL/OpenGLShader.cpp)
 target_include_directories(BounceGUI PUBLIC
         BounceRender
         C:/dev/BounceRender/dependencies/boost_1_76_0/stage/x64/lib/libboost_filesystem-vc142-mt-gd-x64-1_76.lib

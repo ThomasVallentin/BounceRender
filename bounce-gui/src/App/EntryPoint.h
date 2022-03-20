@@ -2,8 +2,8 @@
 // Created by Thomas Vallentin on 17/03/2022.
 //
 
-#ifndef BOUNCE_ENTRYPOINT_H
-#define BOUNCE_ENTRYPOINT_H
+#ifndef BOUNCE_GUI_ENTRYPOINT_H
+#define BOUNCE_GUI_ENTRYPOINT_H
 
 #include "Application.h"
 
@@ -21,4 +21,4 @@ int main(int argc, char *argv[]) {
     return returnCode;
 }
 
-#endif //BOUNCE_ENTRYPOINT_H
+#endif //BOUNCE_GUI_ENTRYPOINT_H

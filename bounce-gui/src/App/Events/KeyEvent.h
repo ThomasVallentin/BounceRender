@@ -2,8 +2,8 @@
 // Created by Thomas Vallentin on 17/03/2022.
 //
 
-#ifndef BOUNCE_KEYEVENT_H
-#define BOUNCE_KEYEVENT_H
+#ifndef BOUNCE_GUI_KEYEVENT_H
+#define BOUNCE_GUI_KEYEVENT_H
 
 #include "App/Event.h"
 
@@ -50,4 +50,4 @@ namespace Bounce::Gui {
 
 }
 
-#endif //BOUNCE_KEYEVENT_H
+#endif //BOUNCE_GUI_KEYEVENT_H

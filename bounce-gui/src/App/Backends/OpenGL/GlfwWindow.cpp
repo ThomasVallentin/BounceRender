@@ -4,12 +4,11 @@
 
 #include "GlfwWindow.h"
 
-#include <glad/glad.h>
-
-
 #include "App/Events/ApplicationEvent.h"
 #include "App/Events/MouseEvent.h"
 #include "App/Events/KeyEvent.h"
+
+#include "App/Backends/OpenGL/OpenGLContext.h"
 
 namespace Bounce::Gui {
 
@@ -43,12 +42,11 @@ namespace Bounce::Gui {
                                   properties.title.c_str(),
                                   nullptr,
                                   nullptr);
-        glfwMakeContextCurrent(m_window);
+
+        m_context = new OpenGLContext(m_window);
+        m_context->Init();
+
         glfwSetWindowUserPointer(m_window, &m_windowData);
-
-        // Initialize GLAD
-        gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-
         // Enable vsync
         glfwSwapInterval(1);
 
@@ -144,7 +142,7 @@ namespace Bounce::Gui {
 
     void GlfwWindow::OnUpdate() {
         glfwPollEvents();
-        glfwSwapBuffers(m_window);
+        m_context->SwapBuffers();
     }
 
     Window* Window::Create(const WindowProperties &properties) {

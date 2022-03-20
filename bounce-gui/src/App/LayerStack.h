@@ -2,8 +2,8 @@
 // Created by Thomas Vallentin on 17/03/2022.
 //
 
-#ifndef BOUNCE_LAYERSTACK_H
-#define BOUNCE_LAYERSTACK_H
+#ifndef BOUNCE_GUI_LAYERSTACK_H
+#define BOUNCE_GUI_LAYERSTACK_H
 
 
 #include "Layer.h"
@@ -28,4 +28,4 @@ namespace Bounce::Gui {
 }
 
 
-#endif //BOUNCE_LAYERSTACK_H
+#endif //BOUNCE_GUI_LAYERSTACK_H

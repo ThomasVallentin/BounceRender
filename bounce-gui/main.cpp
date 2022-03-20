@@ -1,11 +1,13 @@
 #include "App/EntryPoint.h"
 #include "Layers/UILayer.h"
+#include "Layers/RenderLayer.h"
 
 
 class BounceGui : public Bounce::Gui::Application {
 public:
     BounceGui() {
-        AddLayer(new UILayer());
+//        AddLayer(new Bounce::Gui::UILayer());
+        AddLayer(new Bounce::Gui::RenderLayer());
     };
     ~BounceGui() = default;
 };

@@ -4,6 +4,11 @@
 
 #include "Application.h"
 
+#include "App/Backends/OpenGL/OpenGLShader.h"
+#include "App/Backends/OpenGL/OpenGLBuffer.h"
+#include "App/Backends/OpenGL/OpenGLContext.h"
+#include "App/Backends/OpenGL/OpenGLRenderer.h"
+
 #include <glad/glad.h>
 
 namespace Bounce::Gui {
@@ -28,10 +33,6 @@ namespace Bounce::Gui {
         m_isRunning = true;
 
         while(m_isRunning) {
-            // Clear background
-            glClearColor(0.2, 0.2, 0.2, 1);
-            glClear(GL_COLOR_BUFFER_BIT);
-
             for (auto layer : m_layerStack) {
                 layer->OnUpdate();
             }
@@ -41,7 +42,6 @@ namespace Bounce::Gui {
                 layer->OnImGuiRender();
             }
             m_imGuiLayer->End();
-
 
             m_window->OnUpdate();
         }

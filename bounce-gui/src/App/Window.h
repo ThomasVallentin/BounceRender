@@ -2,8 +2,8 @@
 // Created by Thomas Vallentin on 17/03/2022.
 //
 
-#ifndef BOUNCE_WINDOW_H
-#define BOUNCE_WINDOW_H
+#ifndef BOUNCE_GUI_WINDOW_H
+#define BOUNCE_GUI_WINDOW_H
 
 #include "Event.h"
 
@@ -13,8 +13,8 @@
 namespace Bounce::Gui {
 
     struct WindowProperties {
-        int height = 640;
-        int width = 480;
+        int height = 480;
+        int width = 640;
         std::string title = "Bounce::Gui::Window";
     };
 
@@ -34,4 +34,4 @@ namespace Bounce::Gui {
     };
 }
 
-#endif //BOUNCE_WINDOW_H
+#endif //BOUNCE_GUI_WINDOW_H

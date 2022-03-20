@@ -2,8 +2,8 @@
 // Created by Thomas Vallentin on 17/03/2022.
 //
 
-#ifndef BOUNCE_APPLICATIONEVENT_H
-#define BOUNCE_APPLICATIONEVENT_H
+#ifndef BOUNCE_GUI_APPLICATIONEVENT_H
+#define BOUNCE_GUI_APPLICATIONEVENT_H
 
 #include "App/Event.h"
 
@@ -33,4 +33,4 @@ namespace Bounce::Gui {
 
 }
 
-#endif //BOUNCE_APPLICATIONEVENT_H
+#endif //BOUNCE_GUI_APPLICATIONEVENT_H

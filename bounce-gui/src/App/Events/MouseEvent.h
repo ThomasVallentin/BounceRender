@@ -2,8 +2,8 @@
 // Created by Thomas Vallentin on 17/03/2022.
 //
 
-#ifndef BOUNCE_MOUSEEVENT_H
-#define BOUNCE_MOUSEEVENT_H
+#ifndef BOUNCE_GUI_MOUSEEVENT_H
+#define BOUNCE_GUI_MOUSEEVENT_H
 
 #include "App/Event.h"
 
@@ -73,4 +73,4 @@ namespace Bounce::Gui {
 
 }
 
-#endif //BOUNCE_MOUSEEVENT_H
+#endif //BOUNCE_GUI_MOUSEEVENT_H

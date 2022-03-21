@@ -6,7 +6,7 @@
 
 #include "App/Events/MouseEvent.h"
 #include "App/Events/KeyEvent.h"
-#include "App/Application.h"
+#include "App/Core/Application.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>

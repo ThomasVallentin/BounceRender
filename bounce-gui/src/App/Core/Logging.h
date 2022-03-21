@@ -8,8 +8,19 @@
 #include <string>
 
 // Logging
+#ifdef BNC_LOG_DEBUG
 #define BNC_DEBUG(msg, ...)     fprintf(stdout, (std::string("# Bounce Core DEBUG:    ") + msg + "\n").c_str(), __VA_ARGS__)
+#else
+#define BNC_DEBUG(msg, ...)
+#endif
+
+#define BNC_LOG_INFO
+#ifdef BNC_LOG_INFO
 #define BNC_INFO(msg, ...)      fprintf(stdout, (std::string("# Bounce Core INFO:     ") + msg + "\n").c_str(), __VA_ARGS__)
+#else
+#define BNC_INFO(msg, ...)
+#endif
+
 #define BNC_WARNING(msg, ...)   fprintf(stderr, (std::string("# Bounce Core WARNING:  ") + msg + "\n").c_str(), __VA_ARGS__)
 #define BNC_ERROR(msg, ...)     fprintf(stderr, (std::string("# Bounce Core ERROR:    ") + msg + "\n").c_str(), __VA_ARGS__)
 #define BNC_CRITICAL(msg, ...)  fprintf(stderr, (std::string("# Bounce Core CRITICAL: ") + msg + "\n").c_str(), __VA_ARGS__)

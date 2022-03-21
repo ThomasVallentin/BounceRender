@@ -5,9 +5,10 @@
 #include "OpenGLRenderer.h"
 #include "App/Renderer/Mesh.h"
 #include "App/Renderer/Line.h"
-#include "App/Logging.h"
+#include "App/Core/Logging.h"
 
 #include <glad/glad.h>
+#include <glm/gtx/string_cast.hpp>
 
 #include <map>
 
@@ -18,8 +19,9 @@ namespace Bounce::Gui {
 
     void OpenGLRenderer::Flush() {
         // Clear background
+        // TODO(tvallentin) Needs to be extracted to an OpenGL RendererAPI)
         glClearColor(0.2, 0.2, 0.2, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         BatchMap batchMap;
 
@@ -37,8 +39,14 @@ namespace Bounce::Gui {
         // Iterating over groups of items by material, binding the material once
         // and rendering each item
         for (const auto &batch : batchMap) {
+            BNC_DEBUG("Binding material");
             // Binding first material
             batch.first->Bind();
+
+            BNC_DEBUG("Setting view proj matrix : %s",
+                      glm::to_string(s_sceneData.viewProjectionMatrix).c_str());
+            batch.first->GetShader()->SetMat4("u_viewProjMatrix",
+                                              s_sceneData.viewProjectionMatrix);
 
             for (const auto &item: batch.second) {
                 switch (item->GetType()) {

@@ -5,7 +5,7 @@
 #ifndef BOUNCE_GUI_GLFWWINDOW_H
 #define BOUNCE_GUI_GLFWWINDOW_H
 
-#include "App/Window.h"
+#include "App/Core/Window.h"
 #include "App/Renderer/Context.h"
 
 
@@ -24,19 +24,17 @@ namespace Bounce::Gui {
 
         void OnUpdate() override;
 
-        [[nodiscard]] inline unsigned int GetWidth() const override {
-            return m_windowData.width;
-        }
-        [[nodiscard]] inline unsigned int GetHeight() const override {
-            return m_windowData.height;
-        }
+        inline unsigned int GetWidth() const override { return m_windowData.width; }
+        inline unsigned int GetHeight() const override { return m_windowData.height; }
         inline void SetEventCallback(EventCallbackFn callback) override {
             m_windowData.EventCallback = callback;
         }
 
-        static void HandleGlfwError(int error, const char* description);
+        inline void *GetNativeWindow() const override { return m_window; }
 
     private:
+        static void HandleGlfwError(int error, const char* description);
+
         GLFWwindow* m_window;
         RenderContext* m_context;
 

@@ -5,7 +5,7 @@
 #ifndef BOUNCE_GUI_MOUSEEVENT_H
 #define BOUNCE_GUI_MOUSEEVENT_H
 
-#include "App/Event.h"
+#include "App/Core/Event.h"
 
 namespace Bounce::Gui {
 

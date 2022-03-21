@@ -41,8 +41,8 @@ namespace Bounce::Gui {
     OpenGLIndexBuffer::OpenGLIndexBuffer(unsigned int *indices, unsigned int count)
             : m_count(count) {
         glCreateBuffers(1, &m_id);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, count, indices, GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, m_id);
+        glBufferData(GL_ARRAY_BUFFER, count, indices, GL_STATIC_DRAW);
     }
 
     OpenGLIndexBuffer::~OpenGLIndexBuffer() {

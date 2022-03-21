@@ -5,9 +5,10 @@
 #ifndef BOUNCE_GUI_BUFFER_H
 #define BOUNCE_GUI_BUFFER_H
 
-#include <string>
 #include <utility>
+#include <memory>
 #include <vector>
+#include <string>
 
 namespace Bounce::Gui {
 
@@ -94,7 +95,7 @@ namespace Bounce::Gui {
         virtual BufferLayout GetLayout() const = 0;
         virtual void SetLayout(const BufferLayout &layout) = 0;
 
-        static VertexBuffer* Create(float* vertices, unsigned int size);
+        static std::shared_ptr<VertexBuffer> Create(float* vertices, unsigned int size);
     };
 
     class IndexBuffer {
@@ -106,7 +107,7 @@ namespace Bounce::Gui {
 
         virtual unsigned int GetCount() const = 0;
 
-        static IndexBuffer* Create(unsigned int* vertices, unsigned int count);
+        static std::shared_ptr<IndexBuffer> Create(unsigned int* vertices, unsigned int count);
     };
 
 }

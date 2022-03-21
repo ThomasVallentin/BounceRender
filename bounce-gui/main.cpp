@@ -1,4 +1,4 @@
-#include "App/EntryPoint.h"
+#include "App/Core/EntryPoint.h"
 #include "Layers/UILayer.h"
 #include "Layers/RenderLayer.h"
 

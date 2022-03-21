@@ -10,16 +10,16 @@
 
 namespace Bounce::Gui {
 
-    Shader *Shader::Create(const char *vertexCode, const char *fragmentCode) {
+    std::shared_ptr<Shader> Shader::Create(const char *vertexCode, const char *fragmentCode) {
         switch (Renderer::GetAPI()) {
             case RenderAPI::None:    return nullptr;
-            case RenderAPI::OpenGL:  return new OpenGLShader(vertexCode, fragmentCode);
+            case RenderAPI::OpenGL:  return std::make_shared<OpenGLShader>(vertexCode, fragmentCode);
         }
 
         return nullptr;
     }
 
-    Shader* Shader::Load(const char *vertexPath, const char *fragmentPath) {
+    std::shared_ptr<Shader> Shader::Load(const char *vertexPath, const char *fragmentPath) {
         {
             // 1. retrieve the vertex/fragment source code from filePath
             std::string vertexCode;
@@ -50,7 +50,7 @@ namespace Bounce::Gui {
                         "# Error:\n%s\nSomething went wrong trying to read shader file",
                         e.what());
 
-                return new OpenGLShader();
+                return nullptr;
             }
             const char *vShaderCode = vertexCode.c_str();
             const char *fShaderCode = fragmentCode.c_str();

@@ -5,7 +5,7 @@
 #ifndef BOUNCE_GUI_IMGUILAYER_H
 #define BOUNCE_GUI_IMGUILAYER_H
 
-#include "App/Layer.h"
+#include "App/Core/Layer.h"
 #include "App/Events/ApplicationEvent.h"
 #include "App/Events/MouseEvent.h"
 #include "App/Events/KeyEvent.h"

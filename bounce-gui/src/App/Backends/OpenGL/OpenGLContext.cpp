@@ -23,6 +23,9 @@ namespace Bounce::Gui {
         printf("  Vendor: %s\n", glGetString(GL_VENDOR));
         printf("  Renderer: %s\n", glGetString(GL_RENDERER));
         printf("  Version: %s\n", glGetString(GL_VERSION));
+
+        // Enabling depth
+        glEnable(GL_DEPTH_TEST);
     }
 
 

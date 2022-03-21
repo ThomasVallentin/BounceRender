@@ -23,6 +23,8 @@ namespace Bounce::Gui {
         inline void Unbind() const {
             m_shader->Unbind();
         }
+
+        inline std::shared_ptr<Shader> GetShader() const { return m_shader; }
         inline void SetUniforms() const {}
 
     private:

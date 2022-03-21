@@ -7,15 +7,12 @@
 
 #include "Window.h"
 #include "Event.h"
-#include "Events/ApplicationEvent.h"
 #include "LayerStack.h"
-#include "Layers/ImGuiLayer.h"
+#include "App/Events/ApplicationEvent.h"
+#include "App/Layers/ImGuiLayer.h"
 
 #include <core/Raytracer.h>
 #include <core/Scene.h>
-
-#include <boost/filesystem.hpp>
-#include <OpenImageIO/imageio.h>
 
 #include <iostream>
 

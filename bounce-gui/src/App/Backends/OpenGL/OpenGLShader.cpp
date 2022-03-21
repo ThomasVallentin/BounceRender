@@ -5,7 +5,9 @@
 #include "OpenGLShader.h"
 
 #include "glad/glad.h"
-#include "App/Logging.h"
+#include "App/Core/Logging.h"
+
+#include <glm/gtc/type_ptr.hpp>
 
 #include <string>
 #include <fstream>
@@ -24,7 +26,7 @@ namespace Bounce::Gui {
         glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
         // If the vertex shader hasn't been successfully compiled,
         // getting the info log, print it and return
-        if ( success == GL_FALSE ) {
+        if (success == GL_FALSE) {
             GLint logLength;
             glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &logLength);
 
@@ -46,7 +48,7 @@ namespace Bounce::Gui {
         glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
         // If the fragment shader hasn't been successfully compiled,
         // getting the info log, print it and return
-        if ( success == GL_FALSE ) {
+        if (success == GL_FALSE) {
             GLint logLength;
             glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &logLength);
 
@@ -71,7 +73,7 @@ namespace Bounce::Gui {
         glGetProgramiv(m_programId, GL_LINK_STATUS, &success);
         // If the shader program hasn't been successfully linked,
         // getting the info log, print it and return
-        if ( success == GL_FALSE ) {
+        if (success == GL_FALSE) {
             GLint logLength;
             glGetProgramiv(m_programId, GL_INFO_LOG_LENGTH, &logLength);
 
@@ -99,6 +101,21 @@ namespace Bounce::Gui {
 
     void OpenGLShader::Unbind() const {
         glUseProgram(0);
+    }
+
+    void OpenGLShader::SetFloat(const std::string &name, const float &value) const {
+        GLint location = glGetUniformLocation(m_programId, name.c_str());
+        glUniform1f(location, value);
+    }
+
+    void OpenGLShader::SetFloat3(const std::string &name, const glm::vec3 &value) const {
+        GLint location = glGetUniformLocation(m_programId, name.c_str());
+        glUniform3f(location, value.x, value.y, value.z);
+    }
+
+    void OpenGLShader::SetMat4(const std::string &name, const glm::mat4 &value) const {
+        GLint location = glGetUniformLocation(m_programId, name.c_str());
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
     }
 
 }

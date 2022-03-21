@@ -10,10 +10,10 @@
 
 namespace Bounce::Gui {
 
-    VertexArray *VertexArray::Create() {
+    std::shared_ptr<VertexArray> VertexArray::Create() {
         switch (Renderer::GetAPI()) {
-            case RenderAPI::OpenGL: return new OpenGLVertexArray();
             case RenderAPI::None: return nullptr;
+            case RenderAPI::OpenGL: return std::make_shared<OpenGLVertexArray>();
         }
 
         return nullptr;

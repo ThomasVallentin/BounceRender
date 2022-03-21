@@ -9,19 +9,19 @@
 
 namespace Bounce::Gui {
 
-    VertexBuffer* VertexBuffer::Create(float* vertices, unsigned int size) {
+    std::shared_ptr<VertexBuffer>  VertexBuffer::Create(float* vertices, unsigned int size) {
         switch (Renderer::GetAPI()) {
             case RenderAPI::None:    return nullptr;
-            case RenderAPI::OpenGL:  return new OpenGLVertexBuffer(vertices, size);
+            case RenderAPI::OpenGL:  return std::make_shared<OpenGLVertexBuffer>(vertices, size);
         }
 
         return nullptr;
     }
 
-    IndexBuffer* IndexBuffer::Create(unsigned int* indices, unsigned int size) {
+    std::shared_ptr<IndexBuffer> IndexBuffer::Create(unsigned int* indices, unsigned int size) {
         switch (Renderer::GetAPI()) {
             case RenderAPI::None:    return nullptr;
-            case RenderAPI::OpenGL:  return new OpenGLIndexBuffer(indices, size);
+            case RenderAPI::OpenGL:  return std::make_shared<OpenGLIndexBuffer>(indices, size);
         }
 
         return nullptr;

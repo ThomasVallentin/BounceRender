@@ -6,11 +6,12 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 find_package(GLAD REQUIRED)
 find_package(GLFW REQUIRED)
 find_package(ImGui REQUIRED)
+find_package(GLM REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Boost REQUIRED COMPONENTS filesystem)
 find_package(OpenImageIO REQUIRED)
 
-message(${OpenImageIO_FOUND})
+message(${GLM_FOUND})
 
 set(BounceGui_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 file(GLOB_RECURSE BounceGui_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
@@ -35,4 +36,5 @@ target_link_libraries(BounceGUI PUBLIC
         OpenImageIO::OpenImageIO
         ${GLFW_LIBRARY}
         ${GLAD_LIBRARIES}
+        glm::glm
         OpenGL::GL)

@@ -9,14 +9,13 @@ namespace Bounce::Gui {
 
     RenderAPI Renderer::s_renderApi = RenderAPI::OpenGL;
     std::vector<RenderItem*> Renderer::s_renderItems;
-    Scene *Renderer::s_scene = nullptr;
+    SceneData Renderer::s_sceneData = SceneData();
 
-    void Renderer::BeginScene(Scene *scene) {
-        s_scene = scene;
+    void Renderer::BeginScene(Camera &camera) {
+        s_sceneData.viewProjectionMatrix = camera.GetViewProjectionMatrix();
     }
 
     void Renderer::EndScene() {
-        s_scene = nullptr;
     }
 
     void Renderer::Submit(RenderItem *renderItem)  {

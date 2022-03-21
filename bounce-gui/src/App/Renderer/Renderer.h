@@ -6,6 +6,7 @@
 #define BOUNCE_GUI_RENDERER_H
 
 #include "RenderItem.h"
+#include "Camera.h"
 
 #include <vector>
 
@@ -17,23 +18,24 @@ namespace Bounce::Gui {
         OpenGL = 1
     };
 
-    struct Scene {
-        // TODO(tvallentin): Add camera, lights, environment?
-        std::string name;
+    struct SceneData {
+        glm::mat4 viewProjectionMatrix;
+        // TODO(tvallentin): Add lights, environment
     };
 
     class Renderer {
     public:
-        static void BeginScene(Scene *scene);
+        static void BeginScene(Camera &camera);
         static void EndScene();
         static void Submit(RenderItem *renderItem);
+        // TODO(tvallentin): Replace this function by a RenderAPI implementation that calls render commands
         static void Flush();
 
         inline static RenderAPI GetAPI()  { return s_renderApi; }
 
     protected:
         static std::vector<RenderItem *> s_renderItems;
-        static Scene *s_scene;
+        static SceneData s_sceneData;
 
         static RenderAPI s_renderApi;
     };

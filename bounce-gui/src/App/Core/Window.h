@@ -30,6 +30,8 @@ namespace Bounce::Gui {
         [[nodiscard]] virtual unsigned int GetHeight() const = 0;
         virtual void SetEventCallback(EventCallbackFn callback) = 0;
 
+        virtual void* GetNativeWindow() const = 0;
+
         static Window *Create(const WindowProperties &properties = WindowProperties());
     };
 }

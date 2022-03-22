@@ -72,7 +72,7 @@ namespace Bounce::Gui {
         // Looping over all the elements of the vertex buffer layout
         // to bind their data to the vertex array
         const BufferLayout &layout = vertexBuffer->GetLayout();
-        unsigned int index = 0;
+        uint32_t index = 0;
         for (const auto &element : vertexBuffer->GetLayout()) {
             glEnableVertexAttribArray(index);
             glVertexAttribPointer(index,

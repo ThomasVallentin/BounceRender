@@ -18,6 +18,23 @@ namespace Bounce::Gui {
         OpenGL = 1
     };
 
+    enum class DisplayMode {
+        SmoothShaded = 0,
+        HardShaded,
+        Wireframe,
+    };
+
+    enum class LightingMode {
+        DefaultLighting = 0,
+        SceneLighting,
+        FlatLighting,
+    };
+
+    struct RenderHints {
+        DisplayMode displayMode;
+        LightingMode lightingMode;
+    };
+
     struct SceneData {
         glm::mat4 viewProjectionMatrix;
         // TODO(tvallentin): Add lights, environment
@@ -33,11 +50,15 @@ namespace Bounce::Gui {
 
         inline static RenderAPI GetAPI()  { return s_renderApi; }
 
+        inline static RenderHints GetRenderHints()  { return s_renderHints; }
+        static void SetRenderHints(const RenderHints &hints);
+
     protected:
         static std::vector<RenderItem *> s_renderItems;
         static SceneData s_sceneData;
 
         static RenderAPI s_renderApi;
+        static RenderHints s_renderHints;
     };
 }
 

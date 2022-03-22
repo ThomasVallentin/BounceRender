@@ -120,7 +120,7 @@ namespace Bounce::Gui {
 ////        Raytracer raytracer(&scene);
 ////        raytracer.Render(pixels, width, height, camera);
 //
-//unsigned int texture;
+//uint32_t texture;
 //glGenTextures(1, &texture);
 //glBindTexture(GL_TEXTURE_2D, texture);
 //// set the texture wrapping parameters

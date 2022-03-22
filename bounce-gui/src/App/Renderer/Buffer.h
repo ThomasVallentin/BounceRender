@@ -20,7 +20,7 @@ namespace Bounce::Gui {
         Bool,
     };
 
-    static unsigned int ShaderDataTypeSize(const ShaderDataType &type) {
+    static uint32_t ShaderDataTypeSize(const ShaderDataType &type) {
         switch (type) {
             case ShaderDataType::Float:   return 4;
             case ShaderDataType::Float2:  return 4 * 2;
@@ -42,8 +42,8 @@ namespace Bounce::Gui {
     struct BufferElement {
         std::string name;
         ShaderDataType type;
-        unsigned int size;
-        unsigned int offset;
+        uint32_t size;
+        uint32_t offset;
         bool normalized;
 
         BufferElement(const ShaderDataType &type,
@@ -62,7 +62,7 @@ namespace Bounce::Gui {
         BufferLayout() = default;
         BufferLayout(const std::initializer_list<BufferElement> &elements)
                 : m_elements(elements) {
-            unsigned int offset = 0;
+            uint32_t offset = 0;
             m_stride = 0;
             for (auto &element : m_elements) {
                 element.offset = offset;
@@ -72,7 +72,7 @@ namespace Bounce::Gui {
         }
 
         inline const std::vector<BufferElement> &GetElements() const { return m_elements; }
-        inline unsigned int GetStride() const { return m_stride; }
+        inline uint32_t GetStride() const { return m_stride; }
 
 
         inline std::vector<BufferElement>::iterator begin() { return m_elements.begin(); }
@@ -82,7 +82,7 @@ namespace Bounce::Gui {
 
     private:
         std::vector<BufferElement> m_elements;
-        unsigned int m_stride;
+        uint32_t m_stride;
     };
 
     class VertexBuffer {
@@ -95,7 +95,7 @@ namespace Bounce::Gui {
         virtual BufferLayout GetLayout() const = 0;
         virtual void SetLayout(const BufferLayout &layout) = 0;
 
-        static std::shared_ptr<VertexBuffer> Create(float* vertices, unsigned int size);
+        static std::shared_ptr<VertexBuffer> Create(float* vertices, uint32_t size);
     };
 
     class IndexBuffer {
@@ -105,9 +105,9 @@ namespace Bounce::Gui {
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 
-        virtual unsigned int GetCount() const = 0;
+        virtual uint32_t GetCount() const = 0;
 
-        static std::shared_ptr<IndexBuffer> Create(unsigned int* vertices, unsigned int count);
+        static std::shared_ptr<IndexBuffer> Create(uint32_t* vertices, uint32_t count);
     };
 
 }

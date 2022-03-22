@@ -30,7 +30,7 @@ namespace Bounce::Gui {
 
 
     private:
-        unsigned int m_id;
+        uint32_t m_id;
         std::vector<std::shared_ptr<VertexBuffer>> m_vertexBuffers;
         std::shared_ptr<IndexBuffer> m_indexBuffer;
     };

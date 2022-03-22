@@ -26,7 +26,7 @@ namespace Bounce::Gui {
         void SetMat4(const std::string &name, const glm::mat4 &value) const override;
 
     private:
-        unsigned int m_programId;
+        uint32_t m_programId;
 
     };
 

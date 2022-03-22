@@ -23,19 +23,19 @@ namespace Bounce::Gui {
     }
 
     void Camera::OnUpdate() {
-        // Only editing the camera when alt is pressed
-        if (!Input::IsKeyPressed(KeyCode::Left_alt))
-            return;
-
         glm::vec2 mousePos = Input::GetMousePosition();
-        glm::vec2 delta = mousePos - m_prevMousePos;
 
-        if (Input::IsMouseButtonPressed(MouseButton::ButtonMiddle))
-            MousePan(delta.x, delta.y);
-        else if (Input::IsMouseButtonPressed(MouseButton::ButtonLeft))
-            MouseRotate(delta.x, delta.y);
-        else if (Input::IsMouseButtonPressed(MouseButton::ButtonRight))
-            MouseZoom(delta.x);
+        // Only editing the camera when alt is pressed
+        if (Input::IsKeyPressed(KeyCode::Left_alt)) {
+            glm::vec2 delta = mousePos - m_prevMousePos;
+
+            if (Input::IsMouseButtonPressed(MouseButton::ButtonMiddle))
+                MousePan(delta.x, delta.y);
+            else if (Input::IsMouseButtonPressed(MouseButton::ButtonLeft))
+                MouseRotate(delta.x, delta.y);
+            else if (Input::IsMouseButtonPressed(MouseButton::ButtonRight))
+                MouseZoom(delta.x);
+        }
 
         m_prevMousePos = mousePos;
     }

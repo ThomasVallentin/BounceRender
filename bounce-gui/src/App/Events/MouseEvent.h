@@ -18,7 +18,7 @@ namespace Bounce::Gui {
         [[nodiscard]]inline float GetY() const { return m_y; }
 
         EVENT_CLASS_TYPE(MouseMoved)
-        EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+        EVENT_CLASS_CATEGORY(EventCategory_Mouse | EventCategory_Input)
 
     private:
         float m_x, m_y;
@@ -33,7 +33,7 @@ namespace Bounce::Gui {
         [[nodiscard]]inline float GetOffsetY() const { return m_y; }
 
         EVENT_CLASS_TYPE(MouseScrolled)
-        EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+        EVENT_CLASS_CATEGORY(EventCategory_Mouse | EventCategory_Input)
 
     private:
         float m_x, m_y;
@@ -47,7 +47,7 @@ namespace Bounce::Gui {
 
         [[nodiscard]] int GetButton() const { return m_button; }
 
-        EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+        EVENT_CLASS_CATEGORY(EventCategory_Mouse | EventCategory_Input)
 
     private:
         int m_button;

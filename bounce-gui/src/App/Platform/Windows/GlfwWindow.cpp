@@ -127,7 +127,7 @@ namespace Bounce::Gui {
             }
         });
 
-        glfwSetCharCallback(m_window,[](GLFWwindow* window, unsigned int codepoint)
+        glfwSetCharCallback(m_window,[](GLFWwindow* window, uint32_t codepoint)
         {
             WindowData &data = *(WindowData *) glfwGetWindowUserPointer(window);
             KeyTypedEvent event { KeyCode(codepoint) };

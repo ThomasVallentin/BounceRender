@@ -12,6 +12,8 @@ namespace Bounce::Gui {
     class OpenGLRenderer : public Renderer {
     public:
         static void Flush();
+
+        static void SetRenderHints(const RenderHints& hints);
     };
 
 }

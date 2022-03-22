@@ -23,7 +23,7 @@ namespace Bounce::Gui {
         inline void Bind() const override { m_vertexArray->Bind(); }
         inline void Unbind() const override { m_vertexArray->Unbind(); }
 
-        inline unsigned int GetElementCount() const {
+        inline uint32_t GetElementCount() const {
             return m_vertexArray->GetIndexBuffer()->GetCount();
         }
 

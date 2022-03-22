@@ -12,6 +12,7 @@
 #include "App/Renderer/VertexArray.h"
 #include "App/Renderer/Material.h"
 #include "App/Renderer/Camera.h"
+#include "App/Renderer/FrameBuffer.h"
 
 
 namespace Bounce::Gui {
@@ -24,8 +25,13 @@ namespace Bounce::Gui {
         void OnUpdate() override;
         void OnEvent(Event &event) override;
 
+        void OnImGuiRender() override;
+
     private:
         bool OnWindowResizeEvent(WindowResizeEvent &event);
+
+        bool m_showSceneHierarchy = true;
+        bool m_showPropertyView = true;
 
         std::shared_ptr<VertexArray> m_vertexArray;
         std::shared_ptr<VertexArray> m_floorVA;
@@ -37,6 +43,9 @@ namespace Bounce::Gui {
         // We'll deal with this when we'll start implementing the Scene/Entity system,
         // since then let's keep it that way.
         std::shared_ptr<Camera> m_camera;
+
+        std::shared_ptr<FrameBuffer> m_viewportFrameBuffer;
+        float m_viewportWidth, m_viewportHeight;
     };
 
 }

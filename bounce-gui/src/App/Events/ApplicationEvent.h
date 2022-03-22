@@ -11,16 +11,16 @@ namespace Bounce::Gui {
 
     class WindowResizeEvent : public Event {
     public:
-        WindowResizeEvent(const unsigned int &width, const unsigned int &height)
+        WindowResizeEvent(const uint32_t &width, const uint32_t &height)
                 : m_width(width), m_height(height) {}
 
-        [[nodiscard]] unsigned int GetWidth() const { return m_width; }
-        [[nodiscard]] unsigned int GetHeight() const { return m_height; }
+        [[nodiscard]] uint32_t GetWidth() const { return m_width; }
+        [[nodiscard]] uint32_t GetHeight() const { return m_height; }
 
         EVENT_CLASS_TYPE(WindowResize)
-        EVENT_CLASS_CATEGORY(EventCategoryApplication)
+        EVENT_CLASS_CATEGORY(EventCategory_Application)
     private:
-        unsigned int m_width, m_height;
+        uint32_t m_width, m_height;
     };
 
     class WindowCloseEvent : public Event {
@@ -28,7 +28,7 @@ namespace Bounce::Gui {
         WindowCloseEvent() = default;
 
         EVENT_CLASS_TYPE(WindowClose)
-        EVENT_CLASS_CATEGORY(EventCategoryApplication)
+        EVENT_CLASS_CATEGORY(EventCategory_Application)
     };
 
 }

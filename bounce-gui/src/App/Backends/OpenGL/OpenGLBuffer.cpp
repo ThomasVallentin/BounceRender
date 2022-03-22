@@ -10,7 +10,7 @@ namespace Bounce::Gui {
 
     /// == VertexBuffer ============================================================================
 
-    OpenGLVertexBuffer::OpenGLVertexBuffer(float *vertices, unsigned int size) {
+    OpenGLVertexBuffer::OpenGLVertexBuffer(float *vertices, uint32_t size) {
         glCreateBuffers(1, &m_id);
         glBindBuffer(GL_ARRAY_BUFFER, m_id);
         glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
@@ -38,7 +38,7 @@ namespace Bounce::Gui {
 
     /// == IndexBuffer =============================================================================
 
-    OpenGLIndexBuffer::OpenGLIndexBuffer(unsigned int *indices, unsigned int count)
+    OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t *indices, uint32_t count)
             : m_count(count) {
         glCreateBuffers(1, &m_id);
         glBindBuffer(GL_ARRAY_BUFFER, m_id);
@@ -57,7 +57,7 @@ namespace Bounce::Gui {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    unsigned int OpenGLIndexBuffer::GetCount() const {
+    uint32_t OpenGLIndexBuffer::GetCount() const {
         return m_count;
     }
 

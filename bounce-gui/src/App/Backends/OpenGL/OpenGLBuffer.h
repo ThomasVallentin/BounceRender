@@ -11,7 +11,7 @@ namespace Bounce::Gui {
 
     class OpenGLVertexBuffer : public VertexBuffer {
     public:
-        OpenGLVertexBuffer(float* vertices, unsigned int size);
+        OpenGLVertexBuffer(float* vertices, uint32_t size);
         ~OpenGLVertexBuffer() override;
 
         void Bind() const override;
@@ -21,23 +21,23 @@ namespace Bounce::Gui {
         void SetLayout(const BufferLayout &layout) override;
 
     private:
-        unsigned int m_id;
+        uint32_t m_id;
         BufferLayout m_layout;
     };
 
     class OpenGLIndexBuffer : public IndexBuffer {
     public:
-        OpenGLIndexBuffer(unsigned int* indices, unsigned int count);
+        OpenGLIndexBuffer(uint32_t* indices, uint32_t count);
         ~OpenGLIndexBuffer() override;
 
         void Bind() const override;
         void Unbind() const override;
 
-        unsigned int GetCount() const override;
+        uint32_t GetCount() const override;
 
     private:
-        unsigned int m_id;
-        unsigned int m_count;
+        uint32_t m_id;
+        uint32_t m_count;
     };
 
 }

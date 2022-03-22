@@ -24,11 +24,11 @@ namespace Bounce::Gui {
 
     enum EventCategory {
         None = 0,
-        EventCategoryApplication     = 1 << 0,
-        EventCategoryInput           = 1 << 1,
-        EventCategoryKeyboard        = 1 << 2,
-        EventCategoryMouse           = 1 << 3,
-        EventCategoryMouseButton     = 1 << 4,
+        EventCategory_Application     = 1 << 0,
+        EventCategory_Input           = 1 << 1,
+        EventCategory_Keyboard        = 1 << 2,
+        EventCategory_Mouse           = 1 << 3,
+        EventCategory_MouseButton     = 1 << 4,
     };
 
     class Event {

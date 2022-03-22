@@ -77,4 +77,21 @@ namespace Bounce::Gui {
         }
     }
 
+    void OpenGLRenderer::SetRenderHints(const RenderHints &hints) {
+        BNC_INFO("hints.displayMode : %d", hints.displayMode);
+        switch (hints.displayMode) {
+            case DisplayMode::SmoothShaded:
+            case DisplayMode::HardShaded:    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
+            case DisplayMode::Wireframe:     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
+        }
+
+        switch (hints.lightingMode) {
+            case LightingMode::DefaultLighting:
+            case LightingMode::SceneLighting:
+            case LightingMode::FlatLighting:     break;
+        }
+
+        s_renderHints = hints;
+    }
+
 }

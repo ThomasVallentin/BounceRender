@@ -16,7 +16,7 @@ namespace Bounce::Gui {
 
         [[nodiscard]] KeyCode GetKey() const { return m_key; }
 
-        EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
+        EVENT_CLASS_CATEGORY(EventCategory_Keyboard | EventCategory_Input)
 
     private:
         KeyCode m_key;

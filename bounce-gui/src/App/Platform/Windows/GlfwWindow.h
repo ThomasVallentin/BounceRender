@@ -24,8 +24,8 @@ namespace Bounce::Gui {
 
         void OnUpdate() override;
 
-        inline unsigned int GetWidth() const override { return m_windowData.width; }
-        inline unsigned int GetHeight() const override { return m_windowData.height; }
+        inline uint32_t GetWidth() const override { return m_windowData.width; }
+        inline uint32_t GetHeight() const override { return m_windowData.height; }
         inline void SetEventCallback(EventCallbackFn callback) override {
             m_windowData.EventCallback = callback;
         }
@@ -40,7 +40,7 @@ namespace Bounce::Gui {
 
         struct WindowData {
             std::string title;
-            unsigned int width, height;
+            uint32_t width, height;
 
             EventCallbackFn EventCallback;
         };

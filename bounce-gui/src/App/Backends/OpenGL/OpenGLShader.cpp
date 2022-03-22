@@ -17,7 +17,7 @@
 namespace Bounce::Gui {
 
     OpenGLShader::OpenGLShader(const char *vertexCode, const char *fragmentCode) {
-        unsigned int vertexShader;
+        uint32_t vertexShader;
         vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShader, 1, &vertexCode, nullptr);
         glCompileShader(vertexShader);
@@ -39,7 +39,7 @@ namespace Bounce::Gui {
             return;
         }
 
-        unsigned int fragmentShader;
+        uint32_t fragmentShader;
         fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragmentShader, 1, &fragmentCode, nullptr);
         glCompileShader(fragmentShader);

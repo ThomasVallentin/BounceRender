@@ -26,8 +26,8 @@ namespace Bounce::Gui {
 
         virtual void OnUpdate() = 0;
 
-        [[nodiscard]] virtual unsigned int GetWidth() const = 0;
-        [[nodiscard]] virtual unsigned int GetHeight() const = 0;
+        [[nodiscard]] virtual uint32_t GetWidth() const = 0;
+        [[nodiscard]] virtual uint32_t GetHeight() const = 0;
         virtual void SetEventCallback(EventCallbackFn callback) = 0;
 
         virtual void* GetNativeWindow() const = 0;

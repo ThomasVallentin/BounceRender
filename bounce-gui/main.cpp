@@ -1,15 +1,16 @@
-#include "App/Core/EntryPoint.h"
-#include "Layers/RenderLayer.h"
+#include "Rebound/Core/EntryPoint.h"
+#include "Rebound/Layers/MainLayer.h"
 
 
-class BounceGui : public Bounce::Gui::Application {
+class ReboundApplication : public Rebound::Application {
+
 public:
-    BounceGui() {
-        AddLayer(new Bounce::Gui::RenderLayer());
+    ReboundApplication() {
+        AddLayer(new Rebound::MainLayer());
     };
-    ~BounceGui() = default;
+    ~ReboundApplication() = default;
 };
 
-Bounce::Gui::Application *Bounce::Gui::CreateApplication() {
-    return new BounceGui();
+Rebound::Application *Rebound::CreateApplication() {
+    return new ReboundApplication();
 }

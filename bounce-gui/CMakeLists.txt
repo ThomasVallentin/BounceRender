@@ -8,32 +8,28 @@ find_package(GLFW REQUIRED)
 find_package(ImGui REQUIRED)
 find_package(GLM REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(Boost REQUIRED COMPONENTS filesystem)
-find_package(OpenImageIO REQUIRED)
+#find_package(Boost REQUIRED COMPONENTS filesystem)
+#find_package(OpenImageIO REQUIRED)
 
 message(${GLM_FOUND})
 
-set(BounceGui_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-file(GLOB_RECURSE BounceGui_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+set(Rebound_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+file(GLOB_RECURSE Rebound_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
-add_executable(BounceGUI main.cpp
-        ${BounceGui_SOURCES}
-        ${ImGui_SOURCES} src/App/Backends/OpenGL/OpenGLShader.cpp)
-target_include_directories(BounceGUI PUBLIC
+add_executable(Rebound main.cpp
+        ${Rebound_SOURCES}
+        ${ImGui_SOURCES})
+target_include_directories(Rebound PUBLIC
         BounceRender
         C:/dev/BounceRender/dependencies/boost_1_76_0/stage/x64/lib/libboost_filesystem-vc142-mt-gd-x64-1_76.lib
-        Boost::filesystem
-        OpenImageIO::OpenImageIO
-        ${BounceGui_INCLUDE_DIR}
+        ${Rebound_INCLUDE_DIR}
         ${GLFW_INCLUDE_DIR}
         ${GLAD_INCLUDE_DIR}
         ${ImGui_INCLUDE_DIR}
         OpenGL::GL)
-target_link_libraries(BounceGUI PUBLIC
+target_link_libraries(Rebound PUBLIC
         BounceRender
         C:/dev/BounceRender/dependencies/boost_1_76_0/stage/x64/lib/libboost_filesystem-vc142-mt-gd-x64-1_76.lib
-        Boost::filesystem
-        OpenImageIO::OpenImageIO
         ${GLFW_LIBRARY}
         ${GLAD_LIBRARIES}
         glm::glm

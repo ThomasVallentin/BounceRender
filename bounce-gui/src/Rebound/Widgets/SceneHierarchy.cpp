@@ -82,12 +82,16 @@ namespace Rebound {
 
         // Item is clicked without toggling it, add it to the selection
         if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
-            if (!(Input::IsKeyPressed(KeyCode::Left_control) ||
-                  Input::IsKeyPressed(KeyCode::Left_shift))) {
-                ClearSelection();
-            }
+            if (Input::IsKeyPressed(KeyCode::Left_shift))
+                SelectEntity(entity);
 
-            SelectEntity(entity);
+            else if (Input::IsKeyPressed(KeyCode::Left_control))
+                DeselectEntity(entity);
+
+            else {
+                ClearSelection();
+                SelectEntity(entity);
+            }
         }
 
         if (opened) {

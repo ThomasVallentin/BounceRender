@@ -12,6 +12,8 @@
 #include "Rebound/Scene/EntityRegistry.h"
 #include "Rebound/Scene/Entity.h"
 #include "Rebound/Scene/Entities/Xform.h"
+#include "Rebound/Scene/Entities/Mesh.h"
+#include "Rebound/Scene/Entities/Line.h"
 
 #include <glad/glad.h>
 
@@ -36,6 +38,8 @@ namespace Rebound {
         EntityRegistry &registry = EntityRegistry::Get();
         registry.RegisterEntityType<Entity>();
         registry.RegisterEntityType<Xform>();
+        registry.RegisterEntityType<Mesh>();
+        registry.RegisterEntityType<Line>();
     }
 
     int Application::Run() {

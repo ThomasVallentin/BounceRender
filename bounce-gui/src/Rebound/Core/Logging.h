@@ -7,6 +7,8 @@
 
 #include <string>
 
+//#define RBND_LOG_DEBUG
+
 // Logging
 #ifdef RBND_LOG_DEBUG
 #define RBND_DEBUG(msg, ...)     fprintf(stdout, (std::string("# Rebound Core DEBUG:    ") + msg + "\n").c_str(), __VA_ARGS__)

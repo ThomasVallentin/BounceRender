@@ -16,7 +16,6 @@
 
 namespace Rebound {
 
-
     class Entity {
     public:
 
@@ -85,6 +84,12 @@ namespace Rebound {
         inline EntityDataHandle GetHandle() const { return m_dataHandle; }
         inline Scene *GetScene() const { return m_scene; }
 
+        template <class EntityType>
+        inline bool Is() const { return m_scene->Is(this, &typeid(EntityType)); }
+
+        template <class EntityType>
+        inline EntityType As() const { return EntityType(m_dataHandle, m_scene); }
+
     protected:
         Entity() = default;
 
@@ -102,5 +107,14 @@ namespace Rebound {
 
 }
 
+template <>
+class std::hash<Rebound::Entity> {
+public:
+    size_t operator()(const Rebound::Entity& entity) const {
+        // TODO(tvallentin): Will need a proper implementation later
+        return entity.GetHandle();
+    }
+
+};
 
 #endif //TEST_ENTITY_H

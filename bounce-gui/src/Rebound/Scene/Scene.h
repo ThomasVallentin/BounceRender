@@ -22,6 +22,7 @@ namespace Rebound {
 
     class Scene {
     public:
+
         // == CONSTRUCTORS ==
 
         inline static Scene *New() { return new Scene(); }
@@ -42,6 +43,8 @@ namespace Rebound {
 
             return entity;
         }
+
+        bool Is(const Entity *entity, const type_info* type);
 
         // == NAMING ==
 

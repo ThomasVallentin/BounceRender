@@ -15,6 +15,7 @@
 #include "Rebound/Renderer/Material.h"
 #include "Rebound/Renderer/Camera.h"
 #include "Rebound/Renderer/FrameBuffer.h"
+#include "Rebound/Renderer/Scene.h"
 
 #include "Rebound/Scene/Scene.h"
 
@@ -43,10 +44,6 @@ namespace Rebound {
 
         bool m_showPropertyView = true;
 
-        std::shared_ptr<VertexArray> m_vertexArray;
-        std::shared_ptr<VertexArray> m_floorVA;
-        std::shared_ptr<Material> m_material;
-
         // WARNING(tvallentin): Camera used to be a simple attribute instead of
         // a shared pointer to a Camera but this caused crashes when
         // allocating / deallocating memory for strings for an unknown reason.
@@ -58,6 +55,7 @@ namespace Rebound {
         float m_viewportWidth, m_viewportHeight;
 
         std::shared_ptr<Scene> m_scene;
+        std::shared_ptr<RenderScene> m_renderScene;
     };
 
 }

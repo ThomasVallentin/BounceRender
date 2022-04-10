@@ -51,7 +51,7 @@ namespace Rebound {
             for (const auto &item: batch.second) {
                 switch (item->GetType()) {
                     case DrawType::Mesh: {
-                        const Mesh *mesh = (Mesh *) item;
+                        const RenderItems::Mesh *mesh = (RenderItems::Mesh *) item;
                         mesh->Bind();
                         glDrawElements(GL_TRIANGLES,
                                        (int) mesh->GetElementCount(),
@@ -61,9 +61,9 @@ namespace Rebound {
                     }
 
                     case DrawType::Line: {
-                        const Line *line = (Line *) item;
+                        const RenderItems::Line *line = (RenderItems::Line *) item;
                         line->Bind();
-                        glDrawElements(GL_LINES,
+                        glDrawElements(GL_LINE_STRIP,
                                        (int) line->GetElementCount(),
                                        GL_UNSIGNED_INT,
                                        nullptr);

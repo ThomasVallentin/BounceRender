@@ -6,22 +6,17 @@
 #define RBND_XFORM_H
 
 #include "Rebound/Scene/Entity.h"
+#include "glm/glm.hpp"
 
-typedef std::array<float, 16> Matrix4;
 
 namespace Rebound {
 
     class Xform : public Entity {
     public:
-        inline Matrix4 GetTransform() const {
-            Matrix4 result{};
-            GetAttribute<Matrix4>("transform", result);
-            return result;
-        }
+        glm::mat4 GetLocalMatrix() const;
+        void SetLocalMatrix(const glm::mat4 &matrix);
 
-        void SetTransform(const Matrix4 &transform) {
-            SetAttribute<Matrix4>("transform", transform);
-        }
+        glm::mat4 ComputeLocalToWorldMatrix() const;
 
         static std::vector<AttributeSpec> GetDefaultAttributes();
 
@@ -33,7 +28,7 @@ namespace Rebound {
 
     private:
         friend Scene;
-
+        friend Entity;
     };
 
 

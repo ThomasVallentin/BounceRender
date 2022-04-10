@@ -35,6 +35,9 @@ namespace Rebound {
         LightingMode lightingMode;
     };
 
+
+    // TODO(tvallentin): Might be renamed to something like RenderSceneConfiguration
+    //  or RenderEnvironment to avoid the confusion with RenderScene ?
     struct RenderSceneData {
         glm::mat4 viewProjectionMatrix;
         // TODO(tvallentin): Add lights, environment

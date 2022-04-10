@@ -91,13 +91,15 @@ namespace Rebound {
         }
 
         if (opened) {
-            for (size_t i = 0; i < childCount; i++)
+            for (size_t i = 0; i < childCount; i++) {
                 RecurseEntity(entity.GetChild(i));
+            }
         }
 
 
-        if (!childCount)
+        if (opened && childCount) {
             ImGui::TreePop();
+        }
     }
 
 }

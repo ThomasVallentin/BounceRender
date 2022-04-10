@@ -2,8 +2,8 @@
 // Created by Thomas Vallentin on 19/03/2022.
 //
 
-#ifndef RBND_MESH_H
-#define RBND_MESH_H
+#ifndef RBND_RENDER_MESH_H
+#define RBND_RENDER_MESH_H
 
 #include "Item.h"
 #include "VertexArray.h"
@@ -36,4 +36,4 @@ namespace Rebound::RenderItems {
 
 }
 
-#endif //RBND_MESH_H
+#endif //RBND_RENDER_MESH_H

@@ -189,4 +189,12 @@ namespace Rebound {
         return roots;
     }
 
+    bool SceneData::Is(const EntityDataHandle &entity, const type_info *type) {
+        const EntityData *data = GetEntityData(entity);
+        if (!data)
+            return false;
+
+        return data->type == type;
+    }
+
 }

@@ -16,13 +16,28 @@ namespace Rebound {
     public:
         RenderScene() = default;
 
-        void AddEntity(const Entity* entity);
+        void AddEntity(const Entity &entity);
+        void RemoveEntity(const Entity &entity);
+
+        inline void Clear() { m_items.clear(); }
+        inline void Invalidate(const Entity &entity) const;
         void Update();
 
         void Submit();
 
+        inline std::shared_ptr<Material> GetDefaultMaterial() {
+            return m_defaultMaterial;
+        }
+        inline void SetDefaultMaterial(std::shared_ptr<Material> material) {
+            m_defaultMaterial = std::move(material);
+        }
+
     private:
-        std::unordered_map<EntityDataHandle, RenderItem*> m_items;
+        RenderItem* GetItem(const Entity &entity) const;
+        void UpdateItem(const Entity &entity, RenderItem* item);
+
+        std::unordered_map<Entity, RenderItem*> m_items;
+        std::shared_ptr<Material> m_defaultMaterial;
     };
 
 }

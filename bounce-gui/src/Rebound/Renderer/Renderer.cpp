@@ -18,6 +18,7 @@ namespace Rebound {
     }
 
     void Renderer::End() {
+        // Consolidation ?
     }
 
     void Renderer::Submit(RenderItem *renderItem)  {
@@ -26,9 +27,11 @@ namespace Rebound {
 
     void Renderer::Flush() {
         switch (GetAPI()) {
-            case RenderAPI::None:    return;
-            case RenderAPI::OpenGL:  return OpenGLRenderer::Flush();
+            case RenderAPI::None:    break;
+            case RenderAPI::OpenGL:  OpenGLRenderer::Flush(); break;
         }
+
+        s_renderItems.clear();
     }
 
     void Renderer::SetRenderHints(const RenderHints &hints) {

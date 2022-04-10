@@ -7,6 +7,8 @@
 #include "EntityRegistry.h"
 #include "Entity.h"
 #include "Entities/Xform.h"
+#include "Entities/Mesh.h"
+#include "Entities/Line.h"
 
 
 namespace Rebound {
@@ -20,12 +22,43 @@ namespace Rebound {
         //  even though Scene serialization/deserialization has not been written yet.
 
         auto parent = scene->CreateEntity<Entity>("parent");
-        scene->CreateEntity<Entity>("child", &parent);
+        auto child = scene->CreateEntity<Entity>("child", &parent);
 
         auto otherParent = scene->CreateEntity<Xform>("other_parent");
         auto otherChild = scene->CreateEntity<Xform>("other_child", &otherParent);
-        scene->CreateEntity<Xform>("other_subChild", &otherChild);
-        scene->CreateEntity<Xform>("other_sibling", &otherParent);
+
+        auto plane = scene->CreateEntity<Mesh>("plane", &otherChild);
+        plane.SetPositions({ {-10.0f, 0.0f, -10.0f},
+                             {10.0f,  0.0f, -10.0f},
+                             {10.0f,  0.0f, 10.0f},
+                             {-10.0f, 0.0f, 10.0f} });
+        plane.SetIndices({0, 1, 2, 2, 3, 0});
+
+        auto mesh = scene->CreateEntity<Mesh>("cube", &child);
+        mesh.SetPositions({ {-1.0f, 0.0f, -1.0f},
+                            {-1.0f, 0.0f, 1.0f},
+                            {1.0f,  0.0f, 1.0f},
+                            {1.0f,  0.0f, -1.0f},
+                            {-1.0f, 1.0f,  -1.0f},
+                            {-1.0f, 1.0f,  1.0f},
+                            {1.0f,  1.0f,  1.0f},
+                            {1.0f,  1.0f,  -1.0f} });
+        mesh.SetIndices({0, 1, 2, 2, 3, 0,
+                         0, 1, 5, 5, 4, 0,
+                         0, 3, 7, 7, 4, 0,
+                         1, 2, 6, 6, 5, 1,
+                         2, 3, 7, 7, 6, 2,
+                         4, 5, 6, 6, 7, 4});
+
+        auto line = scene->CreateEntity<Line>("line", &otherParent);
+        line.SetPositions({ {1.73f, -0.85f,  1.29f},
+                            {3.74f, 0.56f, 1.59f},
+                            {5.03f, 2.76f, 1.14f},
+                            {5.55f, 4.98f, 0.29f},
+                            {3.51f, 4.47f, -0.48f},
+                            {1.97f, 2.64f, -0.33f},
+                            {1.07f, 0.33f, 0.37f} });
+        line.SetIndices({0, 1, 2, 3, 4, 5, 6});
 
         return scene;
     }
@@ -101,5 +134,9 @@ namespace Rebound {
         }
 
         return roots;
+    }
+
+    bool Scene::Is(const Entity *entity, const type_info *type) {
+        return m_data->Is(entity->m_dataHandle, type);
     }
 }

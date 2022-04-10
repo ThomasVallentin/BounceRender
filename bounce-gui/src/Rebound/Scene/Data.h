@@ -87,6 +87,8 @@ namespace Rebound {
 
         std::vector<EntityDataHandle> GetRootHandles() const;
 
+        bool Is(const EntityDataHandle &entity, const type_info* type);
+
     private:
         struct EntityData {
             std::string name;

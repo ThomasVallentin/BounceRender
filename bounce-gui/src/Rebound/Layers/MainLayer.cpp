@@ -25,58 +25,6 @@ namespace Rebound {
     void MainLayer::OnAttach() {
         m_camera = std::make_shared<Camera>( 50.0f, 1280.0f / 720.0f, 0.1f, 10000.0f);
 
-        // Vertical plane
-        float vertices[4 * 3] {
-                -0.5f, 0.0f, 0.0f,
-                0.5f, 0.0f, 0.0f,
-                0.5f, 1.0f, 0.0f,
-                -0.5f, 1.0f, 0.0f
-        };
-        uint32_t indices[6]{0, 1, 2, 2, 3, 0};
-
-        m_vertexArray = VertexArray::Create();
-        m_vertexArray->Bind();
-
-        auto vertexBuffer = VertexBuffer::Create(
-                vertices,
-                sizeof(vertices));
-        vertexBuffer->SetLayout({
-                {ShaderDataType::Float3, "a_Position"}
-        });
-
-        auto indexBuffer = IndexBuffer::Create(
-                indices,
-                sizeof(indices));
-
-        m_vertexArray->AddVertexBuffer(vertexBuffer);
-        m_vertexArray->SetIndexBuffer(indexBuffer);
-
-        // Floor
-        float floorVertices[4 * 3] {
-                -1.0f, 0.0f, -1.0f,
-                1.0f,  0.0f, -1.0f,
-                1.0f,  0.0f, 1.0f,
-                -1.0f, 0.0f, 1.0f
-        };
-        uint32_t floorIndices[6]{0, 1, 2, 2, 3, 0};
-
-        m_floorVA = VertexArray::Create();
-        m_floorVA->Bind();
-
-        auto floorVB = VertexBuffer::Create(
-                floorVertices,
-                sizeof(floorVertices));
-        floorVB->SetLayout({
-                {ShaderDataType::Float3, "a_Position"}
-        });
-
-        auto floorIB = IndexBuffer::Create(
-                floorIndices,
-                sizeof(floorIndices));
-
-        m_floorVA->AddVertexBuffer(floorVB);
-        m_floorVA->SetIndexBuffer(floorIB);
-
         std::string vertexCode =  R"(
         #version 460 core
 
@@ -107,7 +55,10 @@ namespace Rebound {
 
         std::shared_ptr<Shader> shader = Shader::Create(vertexCode.c_str(),
                                                         fragmentCode.c_str());
-        m_material = std::make_shared<Material>(shader);
+
+        // Initialize render scene
+        m_renderScene = std::make_shared<RenderScene>();
+        m_renderScene->SetDefaultMaterial(std::make_shared<Material>(shader));
 
         FrameBufferSpec spec{1280, 720,
                              FrameBufferTextureFormat::RGBA8,
@@ -137,17 +88,10 @@ namespace Rebound {
         }
         m_viewportFrameBuffer->Bind();
 
-        Renderer::UpdateRenderData();
+        m_renderScene->Update();
 
         Renderer::Begin(*m_camera);
-
-        // Sending items to the renderer
-        // TODO(tvallentin): This needs to be extracted when the Scene system will come
-        RenderItem* mesh = new RenderItems::Mesh(m_vertexArray, m_material);
-        RenderItem* floorMesh = new RenderItems::Mesh(m_floorVA, m_material);
-        Renderer::Submit(mesh);
-        Renderer::Submit(floorMesh);
-
+        m_renderScene->Submit();
         Renderer::End();
 
         // Render
@@ -310,6 +254,8 @@ namespace Rebound {
         auto scene = Scene::New();
         m_scene.reset(scene);
 
+        m_renderScene->Clear();
+
         m_sceneHierarchyWid.SetScene(m_scene);
     }
 
@@ -320,6 +266,15 @@ namespace Rebound {
             RBND_INFO("Scene %s opened successfully !", name.c_str());
             m_scene.reset(scene);
             m_sceneHierarchyWid.SetScene(m_scene);
+
+            // Update render scene from new scene data
+            m_renderScene->Clear();
+            for (const auto &root: m_scene->GetRootEntities()) {
+                m_scene->Traverse(&root,
+                                  [this](Entity entity) {
+                                      m_renderScene->AddEntity(entity);
+                                  });
+            }
         }
     }
 

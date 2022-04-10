@@ -1,21 +1,21 @@
 //
-// Created by Thomas Vallentin on 04/04/2022.
+// Created by Thomas Vallentin on 10/04/2022.
 //
 
-#ifndef RBND_MESH_H
-#define RBND_MESH_H
+#ifndef BOUNCE_LINE_H
+#define BOUNCE_LINE_H
 
-#include "Rebound/Scene/Entities/Xform.h"
+#include "Xform.h"
+
+#include <glm/glm.hpp>
 
 namespace Rebound {
 
-    class Mesh : public Xform {
+    class Line : public Xform {
+
     public:
         std::vector<glm::vec3> GetPositions();
         void SetPositions(const std::vector<glm::vec3> &positions);
-
-        std::vector<glm::vec3> GetNormals();
-        void SetNormals(const std::vector<glm::vec3> &normals);
 
         std::vector<uint32_t> GetIndices();
         void SetIndices(const std::vector<uint32_t> &indices);
@@ -23,9 +23,9 @@ namespace Rebound {
         static std::vector<AttributeSpec> GetDefaultAttributes();
 
     protected:
-        Mesh() = default;
+        Line() = default;
 
-        Mesh(const EntityDataHandle &dataHandle, Scene *scene)
+        Line(const EntityDataHandle &dataHandle, Scene *scene)
                 : Xform(dataHandle, scene) {}
 
     private:
@@ -36,5 +36,4 @@ namespace Rebound {
 
 }
 
-
-#endif //RBND_MESH_H
+#endif //BOUNCE_LINE_H

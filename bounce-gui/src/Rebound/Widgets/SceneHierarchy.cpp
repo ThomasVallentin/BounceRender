@@ -36,32 +36,6 @@ namespace Rebound {
         ImGui::PopStyleVar();
     }
 
-    static inline bool IsWindowContentHoverable(ImGuiWindow* window, ImGuiHoveredFlags flags)
-    {
-        // An active popup disable hovering on other windows (apart from its own children)
-        // FIXME-OPT: This could be cached/stored within the window.
-        ImGuiContext& g = *GImGui;
-        if (g.NavWindow)
-            if (ImGuiWindow* focused_root_window = g.NavWindow->RootWindowDockTree)
-                if (focused_root_window->WasActive && focused_root_window != window->RootWindowDockTree)
-                {
-                    // For the purpose of those flags we differentiate "standard popup" from "modal popup"
-                    // NB: The order of those two tests is important because Modal windows are also Popups.
-                    if (focused_root_window->Flags & ImGuiWindowFlags_Modal)
-                        return false;
-                    if ((focused_root_window->Flags & ImGuiWindowFlags_Popup) && !(flags & ImGuiHoveredFlags_AllowWhenBlockedByPopup))
-                        return false;
-                }
-
-        // Filter by viewport
-        if (window->Viewport != g.MouseViewport)
-            if (g.MovingWindow == NULL || window->RootWindowDockTree != g.MovingWindow->RootWindowDockTree)
-                return false;
-
-        return true;
-    }
-
-
     void SceneHierarchyWidget::RecurseEntity(const Entity& entity) {
         const uint32_t childCount = entity.GetChildCount();
         ImGuiTreeNodeFlags nodeFlags = (ImGuiTreeNodeFlags_FramePadding |

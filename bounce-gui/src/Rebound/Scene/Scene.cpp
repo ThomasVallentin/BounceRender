@@ -73,8 +73,8 @@ namespace Rebound {
         m_data->SetName(entity->m_dataHandle, name);
     }
 
-    std::string Scene::GetTypeName(const Entity *entity) {
-        return m_data->GetTypeName(entity->m_dataHandle);
+    Type Scene::GetType(const Entity *entity) const {
+        return m_data->GetType(entity->m_dataHandle);
     }
 
     // == ATTRIBUTES ==
@@ -136,7 +136,4 @@ namespace Rebound {
         return roots;
     }
 
-    bool Scene::Is(const Entity *entity, const type_info *type) {
-        return m_data->Is(entity->m_dataHandle, type);
-    }
 }

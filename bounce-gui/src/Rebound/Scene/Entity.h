@@ -5,6 +5,7 @@
 #ifndef TEST_ENTITY_H
 #define TEST_ENTITY_H
 
+#include "Type.h"
 #include "EntityRegistry.h"
 #include "AttributeValue.h"
 #include "Scene.h"
@@ -15,6 +16,13 @@
 
 
 namespace Rebound {
+
+#define ENTITY_TYPE(NewType) static inline void Define() { Type::Define<NewType>(); } \
+                             static inline Type GetStaticType() { return Type::Find<NewType>(); }
+
+#define ENTITY_TYPE_FROM_BASES(NewType, ...) static inline void Define() { Type::Define<NewType>( { __VA_ARGS__ } ); } \
+                                             static inline Type GetStaticType() { return Type::Find<NewType>(); }
+
 
     class Entity {
     public:
@@ -29,9 +37,10 @@ namespace Rebound {
             m_scene->SetName(this, name);
         }
 
-        inline std::string GetTypeName() const {
-            return m_scene->GetTypeName(this);
-        }
+        ENTITY_TYPE(Entity)
+
+        inline Type GetType() const { return m_scene->GetType(this); }
+        inline std::string GetTypeName() const { return GetType().GetTypeName(); }
 
         // == HIERARCHY ==
 
@@ -85,7 +94,10 @@ namespace Rebound {
         inline Scene *GetScene() const { return m_scene; }
 
         template <class EntityType>
-        inline bool Is() const { return m_scene->Is(this, &typeid(EntityType)); }
+        inline bool IsA() const { return GetType().IsA<EntityType>(); }
+
+        template <class EntityType>
+        inline bool Is() const { return GetType() == Type::Find<EntityType>(); }
 
         template <class EntityType>
         inline EntityType As() const { return EntityType(m_dataHandle, m_scene); }

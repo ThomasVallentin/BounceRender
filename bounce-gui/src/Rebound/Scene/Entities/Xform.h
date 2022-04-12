@@ -13,6 +13,9 @@ namespace Rebound {
 
     class Xform : public Entity {
     public:
+
+        ENTITY_TYPE_FROM_BASES(Xform, Type::Find<Entity>())
+
         glm::mat4 GetLocalMatrix() const;
         void SetLocalMatrix(const glm::mat4 &matrix);
 

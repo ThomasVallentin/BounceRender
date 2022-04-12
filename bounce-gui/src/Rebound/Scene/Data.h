@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <any>
 #include <functional>
+#include "Type.h"
 
 
 namespace Rebound {
@@ -47,8 +48,15 @@ namespace Rebound {
 
         template<class EntityType>
         EntityDataHandle CreateHandle(const std::string &name) {
+            Type type = Type::Find<EntityType>();
+
+            // Invalid EntityType, return empty handle
+            if (!type)
+                return 0;
+
             EntityDataHandle handle = m_data.size() + 1;  // 0 is keeped for the empty handles
-            m_data[handle] = EntityData{name, &typeid(EntityType)};
+            m_data[handle] = EntityData{name, type};
+
             return handle;
         }
 
@@ -59,7 +67,7 @@ namespace Rebound {
         void SetName(const EntityDataHandle &entity,
                      const std::string &name);
 
-        std::string GetTypeName(const EntityDataHandle &entity);
+        Type GetType(const EntityDataHandle &entity);
 
         // == ATTRIBUTES ==
 
@@ -87,12 +95,10 @@ namespace Rebound {
 
         std::vector<EntityDataHandle> GetRootHandles() const;
 
-        bool Is(const EntityDataHandle &entity, const type_info* type);
-
     private:
         struct EntityData {
             std::string name;
-            const std::type_info *type;
+            Type type;
             std::vector<AttributeSpec> attributes;
 
             EntityDataHandle parent;

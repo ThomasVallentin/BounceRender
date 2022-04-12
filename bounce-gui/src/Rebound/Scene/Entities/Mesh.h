@@ -11,6 +11,9 @@ namespace Rebound {
 
     class Mesh : public Xform {
     public:
+
+        ENTITY_TYPE_FROM_BASES(Mesh, Type::Find<Xform>())
+
         std::vector<glm::vec3> GetPositions();
         void SetPositions(const std::vector<glm::vec3> &positions);
 

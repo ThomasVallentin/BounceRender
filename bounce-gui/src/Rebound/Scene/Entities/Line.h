@@ -12,8 +12,10 @@
 namespace Rebound {
 
     class Line : public Xform {
-
     public:
+
+        ENTITY_TYPE_FROM_BASES(Line, Type::Find<Xform>())
+
         std::vector<glm::vec3> GetPositions();
         void SetPositions(const std::vector<glm::vec3> &positions);
 

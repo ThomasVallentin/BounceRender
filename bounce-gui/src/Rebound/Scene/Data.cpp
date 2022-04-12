@@ -30,12 +30,12 @@ namespace Rebound {
         data->name = name;
     }
 
-    std::string SceneData::GetTypeName(const EntityDataHandle &entity) {
+    Type SceneData::GetType(const EntityDataHandle &entity) {
         EntityData *data = GetEntityData(entity);
         if (!data)
-            return "";
+            return Type();
 
-        return data->type->name();
+        return data->type;
     }
 
     // == ATTRIBUTES ==
@@ -187,14 +187,6 @@ namespace Rebound {
                 roots.push_back(it.first);
 
         return roots;
-    }
-
-    bool SceneData::Is(const EntityDataHandle &entity, const type_info *type) {
-        const EntityData *data = GetEntityData(entity);
-        if (!data)
-            return false;
-
-        return data->type == type;
     }
 
 }

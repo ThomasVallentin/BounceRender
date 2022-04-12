@@ -8,12 +8,11 @@
 
 namespace Rebound {
 
-
     EntityRegistry EntityRegistry::s_registry;
 
-    bool EntityRegistry::GetDefaultValue(const type_info *typeInfo, const std::string &name,
+    bool EntityRegistry::GetDefaultValue(const Type& type, const std::string &name,
                                          AttributeValue &atValue) const {
-        auto it = m_registry.find(typeInfo);
+        auto it = m_registry.find(type);
         if (it != m_registry.end()) {
             auto attributeIt = it->second.find(name);
             if (attributeIt != it->second.end()) {

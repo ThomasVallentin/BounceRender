@@ -139,7 +139,7 @@ namespace Rebound {
             if(ImGui::BeginMenu("File")) {
 
                 if (ImGui::MenuItem("New")) { NewScene(); }
-                if (ImGui::MenuItem("Open")) { OpenScene("test_scene.bnc"); }
+                if (ImGui::MenuItem("Open")) { OpenScene("test_scene.rbnd"); }
                 if (ImGui::MenuItem("Save")) { RBND_INFO("Saving the current scene !"); }
 
                 ImGui::EndMenu(); // File

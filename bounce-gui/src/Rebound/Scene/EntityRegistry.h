@@ -6,6 +6,7 @@
 #define TEST_ENTITYREGISTRY_H
 
 #include "AttributeValue.h"
+#include "Type.h"
 
 #include <unordered_map>
 #include <any>
@@ -30,28 +31,33 @@ namespace Rebound {
 
         template<class EntityType>
         void RegisterEntityType() {
+            Type type = Type::Find<EntityType>();
+            if (!type)
+                return;
+
             AttributeRegistry atRegistry;
             for (AttributeSpec &spec: EntityType::GetDefaultAttributes()) {
                 atRegistry[spec.first] = spec.second;
             }
-            m_registry[&typeid(EntityType)] = atRegistry;
+
+            m_registry[type] = atRegistry;
         }
 
         // Get defaults
-        bool GetDefaultValue(const type_info *typeInfo,
+        bool GetDefaultValue(const Type& typeInfo,
                              const std::string &name,
                              AttributeValue &atValue) const;
 
         template<class EntityType>
         inline bool GetDefaultValue(const std::string &name,
                                     AttributeValue &atValue) {
-            return GetDefaultValue(&typeid(EntityType), name, atValue);
+            return GetDefaultValue(Type::Find<EntityType>(), name, atValue);
         }
 
     private:
         EntityRegistry() = default;
 
-        std::unordered_map<const std::type_info *, AttributeRegistry> m_registry;
+        std::unordered_map<Type, AttributeRegistry> m_registry;
 
         static EntityRegistry s_registry;
     };

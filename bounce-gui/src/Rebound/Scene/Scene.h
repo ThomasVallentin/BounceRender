@@ -44,13 +44,11 @@ namespace Rebound {
             return entity;
         }
 
-        bool Is(const Entity *entity, const type_info* type);
-
         // == NAMING ==
 
         std::string GetName(const Entity *entity) const;
         void SetName(const Entity *entity, const std::string &name) const;
-        std::string GetTypeName(const Entity *entity);
+        Type GetType(const Entity *entity) const;
 
         // == ATTRIBUTES ==
 

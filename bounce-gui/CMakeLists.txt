@@ -8,7 +8,7 @@ find_package(GLFW REQUIRED)
 find_package(ImGui REQUIRED)
 find_package(GLM REQUIRED)
 find_package(OpenGL REQUIRED)
-#find_package(Boost REQUIRED COMPONENTS filesystem)
+find_package(Boost REQUIRED)
 #find_package(OpenImageIO REQUIRED)
 
 message(${GLM_FOUND})
@@ -26,11 +26,13 @@ target_include_directories(Rebound PUBLIC
         ${GLFW_INCLUDE_DIR}
         ${GLAD_INCLUDE_DIR}
         ${ImGui_INCLUDE_DIR}
-        OpenGL::GL)
+        OpenGL::GL
+        Boost::boost)
 target_link_libraries(Rebound PUBLIC
         BounceRender
         C:/dev/BounceRender/dependencies/boost_1_76_0/stage/x64/lib/libboost_filesystem-vc142-mt-gd-x64-1_76.lib
         ${GLFW_LIBRARY}
         ${GLAD_LIBRARIES}
         glm::glm
-        OpenGL::GL)
+        OpenGL::GL
+        Boost::boost)

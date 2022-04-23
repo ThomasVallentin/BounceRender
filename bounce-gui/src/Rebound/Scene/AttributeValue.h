@@ -5,6 +5,8 @@
 #ifndef TEST_ATTRIBUTEVALUE_H
 #define TEST_ATTRIBUTEVALUE_H
 
+#include <boost/type_index.hpp>
+
 #include <unordered_map>
 #include <any>
 #include <iostream>
@@ -53,6 +55,10 @@ namespace Rebound {
             }
             value = std::any_cast<T>(m_value);
             return true;
+        }
+
+        std::string GetTypeName() const {
+            return boost::typeindex::stl_type_index(m_value.type()).pretty_name();
         }
 
     private:

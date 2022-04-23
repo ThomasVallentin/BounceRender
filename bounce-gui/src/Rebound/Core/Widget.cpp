@@ -12,7 +12,7 @@ namespace Rebound {
     void Widget::OnImGuiRender() {
         if (m_visibility) {
             PreRender();
-            ImGui::Begin(m_title.c_str(), &m_visibility);
+            ImGui::Begin(m_title.c_str(), &m_visibility, m_flags);
 
             Render();
 

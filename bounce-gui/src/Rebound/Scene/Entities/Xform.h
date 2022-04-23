@@ -14,14 +14,17 @@ namespace Rebound {
     class Xform : public Entity {
     public:
 
-        ENTITY_TYPE_FROM_BASES(Xform, Type::Find<Entity>())
+        ENTITY_TYPE_FROM_BASES(Xform, Entity)
 
-        glm::mat4 GetLocalMatrix() const;
-        void SetLocalMatrix(const glm::mat4 &matrix);
+        glm::vec3 GetTranslate() const;
+        void SetTranslate(const glm::vec3 &translate);
+        glm::vec3 GetRotate() const;
+        void SetRotate(const glm::vec3 &rotate);
+        glm::vec3 GetScale() const;
+        void SetScale(const glm::vec3 &scale);
 
+        glm::mat4 ComputeLocalMatrix() const;
         glm::mat4 ComputeLocalToWorldMatrix() const;
-
-        static std::vector<AttributeSpec> GetDefaultAttributes();
 
     protected:
         Xform() = default;

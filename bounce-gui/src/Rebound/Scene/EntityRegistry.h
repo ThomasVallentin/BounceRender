@@ -16,9 +16,14 @@
 namespace Rebound {
 
 
-    typedef std::unordered_map<std::string, AttributeValue> AttributeRegistry;
+    typedef std::unordered_map<std::string, AttributeValue> AttributeMap;
     typedef std::pair<std::string, AttributeValue> AttributeSpec;
 
+    struct EntityTypeDefinition {
+        std::unordered_map<std::string, AttributeValue> attributes;
+        std::vector<std::string> allAttributeNames;
+        std::vector<std::string> attributeNames;
+    };
 
     class EntityRegistry {
     public:
@@ -35,29 +40,44 @@ namespace Rebound {
             if (!type)
                 return;
 
-            AttributeRegistry atRegistry;
-            for (AttributeSpec &spec: EntityType::GetDefaultAttributes()) {
-                atRegistry[spec.first] = spec.second;
+            EntityTypeDefinition def;
+            def.attributeNames = EntityType::GetAttributeNames();
+            def.allAttributeNames = EntityType::GetAllAttributeNames();
+            for (AttributeSpec &spec: EntityType::GetAllAttributeDefaults()) {
+                def.attributes[spec.first] = spec.second;
             }
 
-            m_registry[type] = atRegistry;
+            m_registry[type] = def;
         }
 
         // Get defaults
-        bool GetDefaultValue(const Type& typeInfo,
-                             const std::string &name,
-                             AttributeValue &atValue) const;
-
         template<class EntityType>
         inline bool GetDefaultValue(const std::string &name,
                                     AttributeValue &atValue) {
             return GetDefaultValue(Type::Find<EntityType>(), name, atValue);
         }
 
+        bool GetDefaultValue(const Type& typeInfo,
+                             const std::string &name,
+                             AttributeValue &atValue) const;
+
+        template<class EntityType>
+        inline const AttributeMap *GetDefaultValues() {
+            return GetDefaultValues(Type::Find<EntityType>());
+        }
+        const AttributeMap *GetDefaultValues(const Type& type);
+
+        template<class EntityType>
+        inline std::vector<std::string> GetAttributeNames() const{
+            return GetAttributeNames(Type::Find<EntityType>());
+        }
+        std::vector<std::string> GetAttributeNames(const Type& type) const;
+        std::vector<std::string> GetAllAttributeNames(const Type& type) const;
+
     private:
         EntityRegistry() = default;
 
-        std::unordered_map<Type, AttributeRegistry> m_registry;
+        std::unordered_map<Type, EntityTypeDefinition> m_registry;
 
         static EntityRegistry s_registry;
     };

@@ -21,13 +21,13 @@ namespace Rebound {
         // == DEFINITION ==
 
         template <class T>
-        static void Define() {
-            Define(&typeid(T), {});
+        static void Define(const std::string &name) {
+            Define(&typeid(T), name, {});
         }
 
         template <class T>
-        static void Define(const std::vector<Type> & bases) {
-            Define(&typeid(T), bases);
+        static void Define(const std::string &name, const std::vector<Type> & bases) {
+            Define(&typeid(T), name, bases);
         }
 
         // == TYPE SEARCHING ==
@@ -71,7 +71,9 @@ namespace Rebound {
 
         explicit Type(TypeData* typeData) : m_typeData(typeData) {}
 
-        static void Define(const std::type_info* info, const std::vector<Type> & bases);
+        static void Define(const std::type_info* info,
+                           const std::string &name,
+                           const std::vector<Type> & bases);
 
         static TypeData* FindByTypeId(const std::type_info* info);
 

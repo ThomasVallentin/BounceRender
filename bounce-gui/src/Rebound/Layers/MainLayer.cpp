@@ -153,7 +153,9 @@ namespace Rebound {
                     if (ImGui::MenuItem("Scene Hierarchy", nullptr, &m_showSceneHierarchy))
                         m_sceneHierarchyWid.SetVisible(m_showSceneHierarchy);
 
-                    ImGui::MenuItem("Property View", nullptr, &m_showPropertyView);
+                    bool m_showAttributeView = m_attributeViewWid.IsVisible();
+                    if (ImGui::MenuItem("Attribute View", nullptr, &m_showAttributeView))
+                        m_attributeViewWid.SetVisible(m_showAttributeView);
 
                     ImGui::EndMenu(); // UI Elements
                 }
@@ -167,83 +169,63 @@ namespace Rebound {
 
         ImGui::End(); // MainDockSpace
 
-        // Render Scene Hierarchy
+        // Render Scene Hierarchy widget
         m_sceneHierarchyWid.OnImGuiRender();
 
-        // TODO(tvallentin): Extract PropertyView to a separate class
-        if (m_showPropertyView) {
-            ImGui::Begin("Property View", &m_showPropertyView);
+        // Set last selected Entity to the Attribute View
+        auto &selection = m_sceneHierarchyWid.Selection();
+        if (selection.empty())
+            m_attributeViewWid.SetEntity(nullptr);
+        else
+            m_attributeViewWid.SetEntity(&selection[selection.size() - 1]);
 
-            const glm::vec3 &pos = m_camera->GetPosition();
-            float position[3] { pos.x, pos.y, pos.z};
-            const glm::vec3 &rot = glm::eulerAngles(m_camera->GetOrientation());
-            float rotation[3]{glm::degrees(rot.x),
-                              glm::degrees(rot.y),
-                              glm::degrees(rot.z)};
+        // Render Attribute View widget
+        m_attributeViewWid.OnImGuiRender();
 
-            ImGui::PushItemWidth(-FLT_MIN);  // Force the dragFloats to take the whole space available
-            ImGui::AlignTextToFramePadding();
-            ImGui::Text("Translate");
-            ImGui::SameLine(80);
-            ImGui::DragFloat3("##TranslateProperty", position, 1.0f,
-                              0.0f, 180.0f, "%.3f",
-                              ImGuiSliderFlags_NoInput);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+        ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse);
+        // TODO(tvallentin): hide viewport tab bar
 
-            ImGui::AlignTextToFramePadding();
-            ImGui::Text("Rotate");
-            ImGui::SameLine(80);
-            ImGui::DragFloat3("##RotateProperty", rotation, 1.0f,
-                              0.0f, 180.0f, "%.3f",
-                              ImGuiSliderFlags_NoInput);
-            ImGui::PopItemWidth();
+        if (ImGui::IsWindowFocused() || ImGui::IsWindowHovered()) {
+            m_camera->OnUpdate();
+        }
 
-            ImGui::End();
+        // Update internal viewport size from the UI
+        ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+        m_viewportWidth = viewportSize.x;
+        m_viewportHeight = viewportSize.y;
 
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-            ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse);
-            // TODO(tvallentin): hide viewport tab bar
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 4));
+        if (ImGui::BeginMenuBar()) {
 
-            if (ImGui::IsWindowFocused() || ImGui::IsWindowHovered()) {
-                m_camera->OnUpdate();
-            }
+            RenderHints renderHints = Renderer::GetRenderHints();
+            if (ImGui::BeginMenu("Display mode")) {
 
-            // Update internal viewport size from the UI
-            ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-            m_viewportWidth = viewportSize.x;
-            m_viewportHeight = viewportSize.y;
-
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 4));
-            if (ImGui::BeginMenuBar()) {
-
-                RenderHints renderHints = Renderer::GetRenderHints();
-                if (ImGui::BeginMenu("Display mode")) {
-
-                    if (ImGui::MenuItem("Wireframe", nullptr,
-                                        renderHints.displayMode == DisplayMode::Wireframe)) {
-                        renderHints.displayMode = DisplayMode::Wireframe;
-                        Renderer::SetRenderHints(renderHints);
-                    }
-                    if (ImGui::MenuItem("Shaded", nullptr,
-                                        renderHints.displayMode == DisplayMode::SmoothShaded)) {
-                        renderHints.displayMode = DisplayMode::SmoothShaded;
-                        Renderer::SetRenderHints(renderHints);
-                    }
-
-                    ImGui::EndMenu(); // Display Mode
+                if (ImGui::MenuItem("Wireframe", nullptr,
+                                    renderHints.displayMode == DisplayMode::Wireframe)) {
+                    renderHints.displayMode = DisplayMode::Wireframe;
+                    Renderer::SetRenderHints(renderHints);
+                }
+                if (ImGui::MenuItem("Shaded", nullptr,
+                                    renderHints.displayMode == DisplayMode::SmoothShaded)) {
+                    renderHints.displayMode = DisplayMode::SmoothShaded;
+                    Renderer::SetRenderHints(renderHints);
                 }
 
-                ImGui::PopStyleVar();
-                ImGui::EndMenuBar();
+                ImGui::EndMenu(); // Display Mode
             }
 
-            uint64_t textureID = m_viewportFrameBuffer->GetColorAttachmentID();
-            ImGui::Image(reinterpret_cast<void *>(textureID),
-                         ImVec2(m_viewportWidth, m_viewportHeight),
-                         ImVec2{0, 1}, ImVec2{1, 0});
-
-            ImGui::End();
             ImGui::PopStyleVar();
+            ImGui::EndMenuBar();
         }
+
+        uint64_t textureID = m_viewportFrameBuffer->GetColorAttachmentID();
+        ImGui::Image(reinterpret_cast<void *>(textureID),
+                     ImVec2(m_viewportWidth, m_viewportHeight),
+                     ImVec2{0, 1}, ImVec2{1, 0});
+
+        ImGui::End();
+        ImGui::PopStyleVar();
 
         ImGui::ShowDemoWindow();
     }

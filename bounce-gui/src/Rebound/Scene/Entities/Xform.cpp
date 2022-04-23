@@ -4,32 +4,80 @@
 
 #include "Xform.h"
 
+#include <glm/matrix.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_operation.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 namespace Rebound {
 
-    glm::mat4 Xform::GetLocalMatrix() const {
-        glm::mat4 result;
-        GetAttribute<glm::mat4>("localMatrix", result);
-        return result;
-    }
+    glm::mat4 Xform::ComputeLocalMatrix() const {
+        auto translate = glm::translate(glm::mat4(), GetScale());
+        auto rotate = glm::toMat4(glm::quat(GetRotate()));
+        auto scale = glm::scale(glm::mat4(), GetScale());
 
-    void Xform::SetLocalMatrix(const glm::mat4 &matrix) {
-        SetAttribute<glm::mat4>("localMatrix", matrix);
+        return translate * rotate * scale;
     }
 
     glm::mat4 Xform::ComputeLocalToWorldMatrix() const {
-        // TODO(tvallentin): Implement this
-        return GetLocalMatrix();
+        // Going up on each parent trying to find the first Xform parent.
+        // The LocalToWorldMatrix equals the LocalToWorldMatrix of this parent multiplied
+        // by the local matrix of the current Xform.
+        Entity parent = GetParent();
+        while (parent.IsValid()) {
+            if (parent.IsA<Xform>())
+                return parent.As<Xform>().ComputeLocalToWorldMatrix() * ComputeLocalMatrix();
+
+            parent = parent.GetParent();
+        }
+
+        // No valid Xform parent was found, the LocalToWorldMatrix is the LocalMatrix.
+        return ComputeLocalMatrix();
     }
 
-    std::vector<AttributeSpec> Xform::GetDefaultAttributes() {
-        auto specs = Entity::GetDefaultAttributes();
-        specs.emplace_back("localMatrix", AttributeValue::Cast<glm::mat4>({
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1}));
-
-        return specs;
+    std::vector<AttributeSpec> Xform::GetAttributeDefaults() {
+        return {{"translate", AttributeValue::Cast<glm::vec3>({0, 0, 0})},
+                {"rotate", AttributeValue::Cast<glm::vec3>({0, 0, 0})},
+                {"scale", AttributeValue::Cast<glm::vec3>({1, 1, 1})}};
     }
+
+    std::vector<std::string> Xform::GetAttributeNames() {
+        return {"translate", "rotate", "scale"};
+    }
+
+    ALL_ATTRIBUTE_FUNCTIONS_FROM_BASES(Xform, Entity);
+
+    // == ATTRIBUTE ACCESSORS ==
+
+    glm::vec3 Xform::GetTranslate() const {
+        glm::vec3 result;
+        GetAttribute("translate", result);
+        return result;
+    }
+
+    void Xform::SetTranslate(const glm::vec3 &translate) {
+        SetAttribute("translate", translate);
+    }
+
+    glm::vec3 Xform::GetRotate() const {
+        glm::vec3 result;
+        GetAttribute("rotate", result);
+        return result;
+    }
+
+    void Xform::SetRotate(const glm::vec3 &rotate) {
+        SetAttribute("rotate", rotate);
+    }
+
+    glm::vec3 Xform::GetScale() const {
+        glm::vec3 result;
+        GetAttribute("scale", result);
+        return result;
+    }
+
+    void Xform::SetScale(const glm::vec3 &scale) {
+        SetAttribute("scale", scale);
+    }
+
 
 }

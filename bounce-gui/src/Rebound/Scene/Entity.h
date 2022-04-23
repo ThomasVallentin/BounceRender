@@ -5,6 +5,8 @@
 #ifndef TEST_ENTITY_H
 #define TEST_ENTITY_H
 
+#include "Rebound/Core/Rebound.h"
+
 #include "Type.h"
 #include "EntityRegistry.h"
 #include "AttributeValue.h"
@@ -17,11 +19,43 @@
 
 namespace Rebound {
 
-#define ENTITY_TYPE(NewType) static inline void Define() { Type::Define<NewType>(); } \
-                             static inline Type GetStaticType() { return Type::Find<NewType>(); }
+#define ENTITY_TYPE(NewType) \
+    static inline void Define() { Type::Define<NewType>(#NewType); } \
+    static inline Type GetStaticType() { return Type::Find<NewType>(); } \
+    static std::vector<AttributeSpec> GetAttributeDefaults(); \
+    static inline std::vector<AttributeSpec> GetAllAttributeDefaults() { return GetAttributeDefaults(); } \
+    static std::vector<std::string> GetAttributeNames(); \
+    static inline std::vector<std::string> GetAllAttributeNames() { return GetAttributeNames(); } \
 
-#define ENTITY_TYPE_FROM_BASES(NewType, ...) static inline void Define() { Type::Define<NewType>( { __VA_ARGS__ } ); } \
-                                             static inline Type GetStaticType() { return Type::Find<NewType>(); }
+#define FIND_ENTITY_TYPE(EntityType) Type::Find<EntityType>()
+#define ENTITY_TYPE_FROM_BASES(NewType, ...) \
+    static inline void Define() { Type::Define<NewType>( \
+        #NewType,                            \
+        { CALL_MACRO_FOR_EACH(FIND_ENTITY_TYPE, __VA_ARGS__) } ); \
+    } \
+    static inline Type GetStaticType() { return Type::Find<NewType>(); } \
+    static std::vector<std::string> GetAttributeNames(); \
+    static std::vector<AttributeSpec> GetAttributeDefaults(); \
+    static std::vector<std::string> GetAllAttributeNames(); \
+    static std::vector<AttributeSpec> GetAllAttributeDefaults();
+
+#define ADD_ATTR_DEFAULTS(Type) \
+for (const auto& spec : Type::GetAttributeDefaults()) { result.push_back(spec); }
+
+#define ADD_ATTR_NAMES(Type) \
+for (const auto& name : Type::GetAttributeNames()) { result.push_back(name); }
+
+#define ALL_ATTRIBUTE_FUNCTIONS_FROM_BASES(Type, ...) \
+std::vector<std::string> Type::GetAllAttributeNames() { \
+    auto result = GetAttributeNames(); \
+    CALL_MACRO_FOR_EACH(ADD_ATTR_NAMES, __VA_ARGS__)  \
+    return result; \
+} \
+std::vector<AttributeSpec> Type::GetAllAttributeDefaults() { \
+    auto result = GetAttributeDefaults(); \
+    CALL_MACRO_FOR_EACH(ADD_ATTR_DEFAULTS, __VA_ARGS__) \
+    return result;\
+}
 
 
     class Entity {
@@ -44,7 +78,7 @@ namespace Rebound {
 
         // == HIERARCHY ==
 
-        inline Entity GetParent() {
+        inline Entity GetParent() const {
             return m_scene->GetParent(this);
         }
 
@@ -72,6 +106,9 @@ namespace Rebound {
             m_scene->GetAttribute(this, name, atValue);
             return atValue.As<T>(value);
         }
+        inline bool GetAttribute(const std::string &name, AttributeValue &value) const {
+            return m_scene->GetAttribute(this, name, value);
+        }
 
         template<typename T>
         bool SetAttribute(const std::string &name, const T &value) {
@@ -83,8 +120,6 @@ namespace Rebound {
         bool IsValid() const {
             return (!m_dataHandle || !m_scene);
         }
-
-        static std::vector<AttributeSpec> GetDefaultAttributes();
 
         inline bool operator==(const Entity& other) const {
             return m_dataHandle == other.m_dataHandle && m_scene == other.m_scene;
@@ -104,8 +139,6 @@ namespace Rebound {
 
     protected:
         Entity() = default;
-
-        Entity(const std::string &name) { SetName(name); };
 
         Entity(const EntityDataHandle &dataHandle, Scene *scene)
                 : m_dataHandle(dataHandle), m_scene(scene) {}

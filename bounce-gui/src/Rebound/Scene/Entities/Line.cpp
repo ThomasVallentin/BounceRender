@@ -6,6 +6,19 @@
 
 namespace Rebound {
 
+    std::vector<AttributeSpec> Line::GetAttributeDefaults() {
+        return { {"positions", {}},
+                 {"indices",   {}} };
+    }
+
+    std::vector<std::string> Line::GetAttributeNames() {
+        return {"positions", "indices"};
+    }
+
+    ALL_ATTRIBUTE_FUNCTIONS_FROM_BASES(Line, Xform)
+
+    // == ATTRIBUTE ACCESSORS ==
+
     std::vector<glm::vec3> Line::GetPositions() {
         std::vector<glm::vec3> result;
         GetAttribute<std::vector<glm::vec3>>("positions", result);
@@ -15,15 +28,6 @@ namespace Rebound {
 
     void Line::SetPositions(const std::vector<glm::vec3> &positions) {
         SetAttribute<std::vector<glm::vec3>>("positions", positions);
-    }
-
-    std::vector<AttributeSpec> Line::GetDefaultAttributes() {
-        auto specs = Xform::GetDefaultAttributes();
-
-        specs.emplace_back("positions", AttributeValue::New<std::vector<glm::vec3>>());
-        specs.emplace_back("indices", AttributeValue::New<std::vector<uint32_t>>());
-
-        return specs;
     }
 
     std::vector<uint32_t> Line::GetIndices() {
@@ -36,5 +40,4 @@ namespace Rebound {
     void Line::SetIndices(const std::vector<uint32_t> &indices) {
         SetAttribute<std::vector<uint32_t>>("indices", indices);
     }
-
 }

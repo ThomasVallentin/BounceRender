@@ -44,7 +44,6 @@ namespace Rebound {
     }
 
     void OpenGLFrameBuffer::Invalidate() {
-        RBND_INFO("Invalidate");
         if (m_ID) {
             // Deleting the framebuffer to recreate it
             glDeleteFramebuffers(1, &m_ID);

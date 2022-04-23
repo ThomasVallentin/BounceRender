@@ -7,33 +7,29 @@
 #include "Rebound/Scene/Entity.h"
 
 #include "imgui.h"
-#include "Rebound/Core/Logging.h"
 #include "Rebound/Core/Inputs.h"
-#include "imgui_internal.h"
 
 
 namespace Rebound {
 
     void SceneHierarchyWidget::SetScene(const std::shared_ptr<Scene> &scene) {
         m_scene = scene;
+        ClearSelection();
     }
 
     void SceneHierarchyWidget::PreRender() {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 5.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
     }
 
     void SceneHierarchyWidget::Render() {
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
-
         for (const auto &root : m_scene->GetRootEntities()) {
             RecurseEntity(root);
         }
-
-        ImGui::PopStyleVar();
     }
 
     void SceneHierarchyWidget::PostRender() {
-        ImGui::PopStyleVar();
+        ImGui::PopStyleVar(2);
     }
 
     void SceneHierarchyWidget::RecurseEntity(const Entity& entity) {

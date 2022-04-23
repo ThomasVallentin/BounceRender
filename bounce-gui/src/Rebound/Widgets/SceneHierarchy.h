@@ -28,7 +28,7 @@ namespace Rebound {
 
         // == SELECTION ==
 
-        inline const std::vector<Entity> &Selection() const {
+        inline std::vector<Entity> &Selection() {
             return m_selection;
         }
 

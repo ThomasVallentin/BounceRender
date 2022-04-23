@@ -67,15 +67,16 @@ namespace Rebound {
     // Define singleton instance
     TypeRegistry TypeRegistry::s_instance;
 
-    void Type::Define(const std::type_info *info, const std::vector<Type> &bases) {
-        if (FindByTypeId(info))
+    void Type::Define(const std::type_info *info,
+                      const std::string &name,
+                      const std::vector<Type> &bases) {
+        if (FindByTypeId(info) || FindByName(name))
             return;
 
         auto &registry = TypeRegistry::Get();
 
         // Create new Type & TypeData
-        TypeData *newTypeData = registry.NewTypeData(
-                boost::typeindex::stl_type_index(*info).pretty_name(), info);
+        TypeData *newTypeData = registry.NewTypeData(name, info);
         Type newType(newTypeData);
 
         // Set bases to new type
@@ -128,7 +129,7 @@ namespace Rebound {
     }
 
     std::ostream& operator<<(std::ostream& out, const Type &type) {
-        return out << "Type(" << type.GetTypeName() << ")";
+        return out << "Type(" << (type.IsValid() ? type.GetTypeName() : "Invalid") << ")";
     }
 
 }

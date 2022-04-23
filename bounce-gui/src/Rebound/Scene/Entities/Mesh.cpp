@@ -6,6 +6,24 @@
 
 namespace Rebound {
 
+    void Mesh::SetIndices(const std::vector<uint32_t> &indices) {
+        SetAttribute<std::vector<uint32_t>>("indices", indices);
+    }
+
+    std::vector<AttributeSpec> Mesh::GetAttributeDefaults() {
+        return { {"positions", {}},
+                 {"normals",   {}},
+                 {"indices",   {}} };
+    }
+
+    std::vector<std::string> Mesh::GetAttributeNames() {
+        return {"positions", "normals", "indices"};
+    }
+
+    ALL_ATTRIBUTE_FUNCTIONS_FROM_BASES(Mesh, Xform)
+
+    // == ATTRIBUTE ACCESSORS ==
+
     std::vector<glm::vec3> Mesh::GetPositions() {
         std::vector<glm::vec3> result;
         GetAttribute<std::vector<glm::vec3>>("positions", result);
@@ -15,16 +33,6 @@ namespace Rebound {
 
     void Mesh::SetPositions(const std::vector<glm::vec3> &positions) {
         SetAttribute<std::vector<glm::vec3>>("positions", positions);
-    }
-
-    std::vector<AttributeSpec> Mesh::GetDefaultAttributes() {
-        auto specs = Xform::GetDefaultAttributes();
-
-        specs.emplace_back("positions", AttributeValue::New<std::vector<glm::vec3>>());
-        specs.emplace_back("normals", AttributeValue::New<std::vector<glm::vec3>>());
-        specs.emplace_back("indices", AttributeValue::New<std::vector<uint32_t>>());
-
-        return specs;
     }
 
     std::vector<glm::vec3> Mesh::GetNormals() {
@@ -43,9 +51,5 @@ namespace Rebound {
         GetAttribute<std::vector<uint32_t>>("indices", result);
 
         return result;
-    }
-
-    void Mesh::SetIndices(const std::vector<uint32_t> &indices) {
-        SetAttribute<std::vector<uint32_t>>("indices", indices);
     }
 }

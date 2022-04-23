@@ -37,10 +37,14 @@ namespace Rebound {
         // Initialize basic types
         EntityRegistry &registry = EntityRegistry::Get();
 
-        Entity::Define();  registry.RegisterEntityType<Entity>();
-        Xform::Define();   registry.RegisterEntityType<Xform>();
-        Mesh::Define();    registry.RegisterEntityType<Mesh>();
-        Line::Define();    registry.RegisterEntityType<Line>();
+        Entity::Define();
+        registry.RegisterEntityType<Entity>();
+        Xform::Define();
+        registry.RegisterEntityType<Xform>();
+        Mesh::Define();
+        registry.RegisterEntityType<Mesh>();
+        Line::Define();
+        registry.RegisterEntityType<Line>();
     }
 
     int Application::Run() {

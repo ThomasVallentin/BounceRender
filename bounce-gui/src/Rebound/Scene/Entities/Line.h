@@ -14,15 +14,13 @@ namespace Rebound {
     class Line : public Xform {
     public:
 
-        ENTITY_TYPE_FROM_BASES(Line, Type::Find<Xform>())
+        ENTITY_TYPE_FROM_BASES(Line, Xform)
 
         std::vector<glm::vec3> GetPositions();
         void SetPositions(const std::vector<glm::vec3> &positions);
 
         std::vector<uint32_t> GetIndices();
         void SetIndices(const std::vector<uint32_t> &indices);
-
-        static std::vector<AttributeSpec> GetDefaultAttributes();
 
     protected:
         Line() = default;

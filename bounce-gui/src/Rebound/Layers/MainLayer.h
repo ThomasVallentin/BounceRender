@@ -9,6 +9,7 @@
 #include "Rebound/Core/Layer.h"
 
 #include "Rebound/Widgets/SceneHierarchy.h"
+#include "Rebound/Widgets/AttributeView.h"
 
 #include "Rebound/Events/ApplicationEvent.h"
 #include "Rebound/Renderer/VertexArray.h"
@@ -41,6 +42,7 @@ namespace Rebound {
         void OpenScene(const std::string& name);
 
         SceneHierarchyWidget m_sceneHierarchyWid;
+        AttributeViewWidget m_attributeViewWid;
 
         bool m_showPropertyView = true;
 

@@ -7,7 +7,11 @@
 
 namespace Rebound {
 
-    std::vector<AttributeSpec> Entity::GetDefaultAttributes() {
+    std::vector<AttributeSpec> Entity::GetAttributeDefaults() {
+        return {};
+    }
+
+    std::vector<std::string> Entity::GetAttributeNames() {
         return {};
     }
 

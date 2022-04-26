@@ -10,12 +10,16 @@
 
 class RTCRayHit;
 
-class Material {
-public:
-    Material() = default;
+namespace Bounce {
 
-    virtual void FillBSDF(const RTCRayHit &rayhit, BSDF &bsdf) const = 0;
-};
 
+    class Material {
+    public:
+        Material() = default;
+
+        virtual void FillBSDF(const RTCRayHit &rayhit, BSDF &bsdf) const = 0;
+    };
+
+}
 
 #endif //BOUNCE_MATERIAL_H

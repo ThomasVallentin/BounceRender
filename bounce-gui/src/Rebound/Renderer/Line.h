@@ -1,33 +1,21 @@
 //
-// Created by Thomas Vallentin on 19/03/2022.
+// Created by Thomas Vallentin on 22/05/2022.
 //
 
-#ifndef RBND_RENDER_LINE_H
-#define RBND_RENDER_LINE_H
-
-#include "Item.h"
-#include "VertexArray.h"
+#ifndef RBND_LINE_H
+#define RBND_LINE_H
 
 
-namespace Rebound::RenderItems {
+#include "RenderEntity.h"
 
-    class Line : public RenderItem {
+namespace Rebound {
+
+    class RenderLine : public RenderEntity {
     public:
-        Line(std::shared_ptr<VertexArray> vertexArray, std::shared_ptr<Material> material)
-                : RenderItem(std::move(material)),
-                  m_vertexArray(std::move(vertexArray)) {}
+        RenderLine(const Entity& entity) : RenderEntity(entity) {}
 
-        inline void Bind() const override { m_vertexArray->Bind(); }
-        inline void Unbind() const override { m_vertexArray->Unbind(); }
-
-        inline uint32_t GetElementCount() const {
-            return m_vertexArray->GetIndexBuffer()->GetCount();
-        }
-
-        RENDER_ITEM_TYPE(Line);
-
-    protected:
-        std::shared_ptr<VertexArray> m_vertexArray;
+        void Sync(const EntityInvalidation& invalidation) override;
+        void GetPositions() const;
     };
 
 }

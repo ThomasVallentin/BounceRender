@@ -10,7 +10,7 @@
 
 #include <glm/gtx/string_cast.hpp>
 
-namespace Rebound {
+namespace Hop {
 
     Camera::Camera(const float &fov, const float &aspectRatio, const float &nearClip,
                    const float &farClip)
@@ -23,17 +23,17 @@ namespace Rebound {
     }
 
     void Camera::OnUpdate() {
-        glm::vec2 mousePos = Input::GetMousePosition();
+        glm::vec2 mousePos = Rebound::Input::GetMousePosition();
 
         // Only editing the camera when alt is pressed
-        if (Input::IsKeyPressed(KeyCode::Left_alt)) {
+        if (Rebound::Input::IsKeyPressed(Rebound::KeyCode::Left_alt)) {
             glm::vec2 delta = mousePos - m_prevMousePos;
 
-            if (Input::IsMouseButtonPressed(MouseButton::ButtonMiddle))
+            if (Rebound::Input::IsMouseButtonPressed(Rebound::MouseButton::ButtonMiddle))
                 MousePan(delta.x, delta.y);
-            else if (Input::IsMouseButtonPressed(MouseButton::ButtonLeft))
+            else if (Rebound::Input::IsMouseButtonPressed(Rebound::MouseButton::ButtonLeft))
                 MouseRotate(delta.x, delta.y);
-            else if (Input::IsMouseButtonPressed(MouseButton::ButtonRight))
+            else if (Rebound::Input::IsMouseButtonPressed(Rebound::MouseButton::ButtonRight))
                 MouseZoom(delta.x);
         }
 
@@ -62,13 +62,13 @@ namespace Rebound {
         UpdateView();
     }
 
-    void Camera::OnEvent(Event &event) {
-        EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FUNC(Camera::OnMouseScrollEvent));
-        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNC(Camera::OnKeyPressedEvent));
+    void Camera::OnEvent(Rebound::Event &event) {
+        Rebound::EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<Rebound::MouseScrolledEvent>(BIND_EVENT_FUNC(Camera::OnMouseScrollEvent));
+        dispatcher.Dispatch<Rebound::KeyPressedEvent>(BIND_EVENT_FUNC(Camera::OnKeyPressedEvent));
     }
 
-    bool Camera::OnMouseScrollEvent(MouseScrolledEvent &event) {
+    bool Camera::OnMouseScrollEvent(Rebound::MouseScrolledEvent &event) {
         RBND_DEBUG("Mouse scrolled ! Delta=(%f,%f)", event.GetOffsetX(), event.GetOffsetY());
         m_distance -= event.GetOffsetY() * 0.3f * m_distance;
 
@@ -77,10 +77,10 @@ namespace Rebound {
         return false;
     }
 
-    bool Camera::OnKeyPressedEvent(KeyPressedEvent &event) {
+    bool Camera::OnKeyPressedEvent(Rebound::KeyPressedEvent &event) {
         RBND_DEBUG("Key  %d pressed !", event.GetKey());
         // Pseudo focus that reset the camera distance and focal point
-        if (event.GetKey() == KeyCode::F) {
+        if (event.GetKey() == Rebound::KeyCode::F) {
             m_focalPoint = {0.0f, 0.0f, 0.0f};
             m_distance = 5.0f;
             m_pitch = 0.5f;

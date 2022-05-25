@@ -11,7 +11,8 @@ find_package(OpenGL REQUIRED)
 find_package(Boost REQUIRED)
 #find_package(OpenImageIO REQUIRED)
 
-message(${GLM_FOUND})
+get_target_property(POUET BounceRender INCLUDE_DIRECTORIES)
+message(${POUET})
 
 set(Rebound_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 file(GLOB_RECURSE Rebound_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
@@ -21,7 +22,6 @@ add_executable(Rebound main.cpp
         ${ImGui_SOURCES})
 target_include_directories(Rebound PUBLIC
         BounceRender
-        C:/dev/BounceRender/dependencies/boost_1_76_0/stage/x64/lib/libboost_filesystem-vc142-mt-gd-x64-1_76.lib
         ${Rebound_INCLUDE_DIR}
         ${GLFW_INCLUDE_DIR}
         ${GLAD_INCLUDE_DIR}

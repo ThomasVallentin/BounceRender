@@ -8,12 +8,13 @@
 #include <imgui.h>
 
 #include <string>
+#include <utility>
 
 namespace Rebound {
 
     class Widget {
     public:
-        Widget(const std::string &title) : m_title(title), m_flags(0) {}
+        Widget(std::string title) : m_title(std::move(title)), m_flags(0) {}
 
         inline ImGuiWindowFlags GetWindowFlags() const { return m_flags; }
         inline void SetWindowFlags(const ImGuiWindowFlags &flags) { m_flags = flags; }

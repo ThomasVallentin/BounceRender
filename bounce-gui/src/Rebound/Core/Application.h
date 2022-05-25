@@ -11,9 +11,6 @@
 #include "Rebound/Events/ApplicationEvent.h"
 #include "Rebound/Layers/ImGuiLayer.h"
 
-#include <core/Raytracer.h>
-#include <core/Scene.h>
-
 #include <iostream>
 
 

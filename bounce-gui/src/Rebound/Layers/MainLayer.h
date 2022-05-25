@@ -16,7 +16,7 @@
 #include "Rebound/Renderer/Material.h"
 #include "Rebound/Renderer/Camera.h"
 #include "Rebound/Renderer/FrameBuffer.h"
-#include "Rebound/Renderer/Scene.h"
+#include "Rebound/Renderer/RenderScene.h"
 
 #include "Rebound/Scene/Scene.h"
 
@@ -58,6 +58,8 @@ namespace Rebound {
 
         std::shared_ptr<Scene> m_scene;
         std::shared_ptr<RenderScene> m_renderScene;
+
+
     };
 
 }

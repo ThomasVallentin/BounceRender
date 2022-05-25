@@ -2,8 +2,8 @@
 // Created by Thomas Vallentin on 19/03/2022.
 //
 
-#ifndef RBND_CAMERA_H
-#define RBND_CAMERA_H
+#ifndef HOP_CAMERA_H
+#define HOP_CAMERA_H
 
 #include "Rebound/Core/Event.h"
 #include "Rebound/Events/KeyEvent.h"
@@ -14,6 +14,9 @@
 
 namespace Rebound {
 
+    // TODO: Should be abstracted, and split into 2 classes that handles respectively the camera
+    //  matrices and the camera manipulation (for the editor only)
+
     class Camera {
     public:
         Camera() = default;
@@ -23,7 +26,7 @@ namespace Rebound {
                const float &farClip);
 
         void OnUpdate();
-        void OnEvent(Event &event);
+        void OnEvent(Rebound::Event &event);
 
         void SetViewportSize(const float &width, const float &height);
 
@@ -46,8 +49,8 @@ namespace Rebound {
         void MouseRotate(const float &deltaX, const float &deltaY);
         void MouseZoom(const float &deltaX);
 
-        bool OnMouseScrollEvent(MouseScrolledEvent &event);
-        bool OnKeyPressedEvent(KeyPressedEvent &event);
+        bool OnMouseScrollEvent(Rebound::MouseScrolledEvent &event);
+        bool OnKeyPressedEvent(Rebound::KeyPressedEvent &event);
 
         glm::vec2 m_prevMousePos;
 
@@ -74,4 +77,4 @@ namespace Rebound {
 }
 
 
-#endif //RBND_CAMERA_H
+#endif //HOP_CAMERA_H

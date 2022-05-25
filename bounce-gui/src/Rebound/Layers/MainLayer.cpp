@@ -227,7 +227,7 @@ namespace Rebound {
         ImGui::End();
         ImGui::PopStyleVar();
 
-        ImGui::ShowDemoWindow();
+//        ImGui::ShowDemoWindow();
     }
 
     void MainLayer::NewScene() {

@@ -14,7 +14,7 @@ namespace Rebound {
 
     class Widget {
     public:
-        Widget(std::string title) : m_title(std::move(title)), m_flags(0) {}
+        explicit Widget(std::string title) : m_title(std::move(title)), m_flags(0) {}
 
         inline ImGuiWindowFlags GetWindowFlags() const { return m_flags; }
         inline void SetWindowFlags(const ImGuiWindowFlags &flags) { m_flags = flags; }

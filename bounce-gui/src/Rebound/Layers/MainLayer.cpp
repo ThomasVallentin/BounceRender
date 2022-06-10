@@ -4,8 +4,7 @@
 
 #include "MainLayer.h"
 
-#include "Rebound/Renderer/Renderer.h"
-#include "Rebound/Renderer/Mesh.h"
+#include "Rebound/Renderer/Hop/RenderDelegate.h"
 
 #include "Rebound/Scene/Entity.h"
 
@@ -25,50 +24,21 @@ namespace Rebound {
     void MainLayer::OnAttach() {
         m_camera = std::make_shared<Camera>( 50.0f, 1280.0f / 720.0f, 0.1f, 10000.0f);
 
-        std::string vertexCode =  R"(
-        #version 460 core
-
-        layout(location = 0) in vec3 a_Position;
-
-        uniform mat4 u_viewProjMatrix;
-
-        out vec3 v_Position;
-
-        void main()
-        {
-            v_Position = a_Position;
-            gl_Position = u_viewProjMatrix * vec4(a_Position, 1.0);
-        }
-		)";
-        std::string fragmentCode = R"(
-        #version 460 core
-
-        layout(location = 0) out vec4 color;
-
-        in vec3 v_Position;
-
-        void main()
-        {
-            color = vec4(v_Position * 0.5 + 0.5, 1.0);
-        }
-        )";
-
-        std::shared_ptr<Shader> shader = Shader::Create(vertexCode.c_str(),
-                                                        fragmentCode.c_str());
-
-        // Initialize render scene
-        m_renderScene = std::make_shared<RenderScene>();
-        m_renderScene->SetDefaultMaterial(std::make_shared<Material>(shader));
-
-        FrameBufferSpec spec{1280, 720,
-                             FrameBufferTextureFormat::RGBA8,
-                             FrameBufferTextureFormat::Depth,
-                             1};
-        m_viewportFrameBuffer = FrameBuffer::Create(spec);
-
-        // Open empty scene
+        // Create empty scene
+        // TODO: Open a scene on disk if an argument is passed to the executable
         auto newScene = Scene::New();
         m_scene.reset(newScene);
+
+        // Initialize render scene
+        auto renderDelegate = new Hop::RenderDelegate();
+        renderDelegate->SetRenderScene(new RenderScene(renderDelegate));
+        m_renderDelegate.reset(renderDelegate);
+
+        auto spec = new Hop::FrameBufferSpec{1280, 720,
+                                             Hop::FrameBufferTextureFormat::RGBA8,
+                                             Hop::FrameBufferTextureFormat::Depth,
+                                             1};
+        m_renderDelegate->SetFrameBuffer(m_renderDelegate->CreateFrameBuffer(spec));
 
         // Setup scene hierarchy widget
         m_sceneHierarchyWid.SetScene(m_scene);
@@ -80,24 +50,18 @@ namespace Rebound {
 
     void MainLayer::OnUpdate() {
         // Updating frame buffer size if the viewport size has changed
-        const FrameBufferSpec spec = m_viewportFrameBuffer->GetSpecifications();
-        if ((uint32_t) m_viewportWidth != spec.width || (uint32_t) m_viewportHeight != spec.height) {
+        auto frameBuffer = m_renderDelegate->GetFrameBuffer();
+        FrameBufferSpec *spec = frameBuffer->GetSpecifications();
+        if ((uint32_t) m_viewportWidth != spec->width ||
+            (uint32_t) m_viewportHeight != spec->height) {
+
             m_camera->SetViewportSize(m_viewportWidth, m_viewportHeight);
-            m_viewportFrameBuffer->Resize((uint32_t) m_viewportWidth,
-                                          (uint32_t) m_viewportHeight);
+            frameBuffer->Resize((uint32_t) m_viewportWidth,
+                                (uint32_t) m_viewportHeight);
         }
-        m_viewportFrameBuffer->Bind();
 
-        m_renderScene->Update();
-
-        Renderer::Begin(*m_camera);
-        m_renderScene->Submit();
-        Renderer::End();
-
-        // Render
-        Renderer::Flush();
-
-        m_viewportFrameBuffer->Unbind();
+        m_renderDelegate->GetRenderScene()->Sync();
+        m_renderDelegate->Render(m_camera.get());
     }
 
     void MainLayer::OnEvent(Event &event) {
@@ -198,18 +162,18 @@ namespace Rebound {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 4));
         if (ImGui::BeginMenuBar()) {
 
-            RenderHints renderHints = Renderer::GetRenderHints();
+            Hop::RenderHints renderHints = m_renderDelegate->GetRenderHints();
             if (ImGui::BeginMenu("Display mode")) {
 
                 if (ImGui::MenuItem("Wireframe", nullptr,
-                                    renderHints.displayMode == DisplayMode::Wireframe)) {
-                    renderHints.displayMode = DisplayMode::Wireframe;
-                    Renderer::SetRenderHints(renderHints);
+                                    renderHints.displayMode == Hop::DisplayMode::Wireframe)) {
+                    renderHints.displayMode = Hop::DisplayMode::Wireframe;
+                    m_renderDelegate->SetRenderHints(renderHints);
                 }
                 if (ImGui::MenuItem("Shaded", nullptr,
-                                    renderHints.displayMode == DisplayMode::SmoothShaded)) {
-                    renderHints.displayMode = DisplayMode::SmoothShaded;
-                    Renderer::SetRenderHints(renderHints);
+                                    renderHints.displayMode == Hop::DisplayMode::SmoothShaded)) {
+                    renderHints.displayMode = Hop::DisplayMode::SmoothShaded;
+                    m_renderDelegate->SetRenderHints(renderHints);
                 }
 
                 ImGui::EndMenu(); // Display Mode
@@ -219,7 +183,7 @@ namespace Rebound {
             ImGui::EndMenuBar();
         }
 
-        uint64_t textureID = m_viewportFrameBuffer->GetColorAttachmentID();
+        uint64_t textureID = m_renderDelegate->GetFrameBuffer()->GetColorAttachmentID();
         ImGui::Image(reinterpret_cast<void *>(textureID),
                      ImVec2(m_viewportWidth, m_viewportHeight),
                      ImVec2{0, 1}, ImVec2{1, 0});
@@ -236,8 +200,10 @@ namespace Rebound {
         auto scene = Scene::New();
         m_scene.reset(scene);
 
-        m_renderScene->Clear();
+        // Remove the scene from the render delegate / render scene
+        m_renderDelegate->GetRenderScene()->UnbindScene();
 
+        // Reset the scene hierarchy widget
         m_sceneHierarchyWid.SetScene(m_scene);
     }
 
@@ -247,16 +213,12 @@ namespace Rebound {
         if (auto scene = Scene::Open(name)) {
             RBND_INFO("Scene %s opened successfully !", name.c_str());
             m_scene.reset(scene);
-            m_sceneHierarchyWid.SetScene(m_scene);
 
             // Update render scene from new scene data
-            m_renderScene->Clear();
-            for (const auto &root: m_scene->GetRootEntities()) {
-                m_scene->Traverse(&root,
-                                  [this](Entity entity) {
-                                      m_renderScene->AddEntity(entity);
-                                  });
-            }
+            m_renderDelegate->GetRenderScene()->BindScene(m_scene.get());
+
+            // Reset the scene hierarchy widget
+            m_sceneHierarchyWid.SetScene(m_scene);
         }
     }
 

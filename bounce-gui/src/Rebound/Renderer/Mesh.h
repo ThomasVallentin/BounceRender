@@ -2,24 +2,28 @@
 // Created by Thomas Vallentin on 22/05/2022.
 //
 
-#ifndef RBND_MESH_H
-#define RBND_MESH_H
+#ifndef RBND_RENDER_MESH_H
+#define RBND_RENDER_MESH_H
 
 #include "RenderEntity.h"
+
+#include <glm/vec3.hpp>
+
 
 namespace Rebound {
 
     class RenderMesh : public RenderEntity {
     public:
-        RenderMesh(const Entity& entity) : RenderEntity(entity) {}
+        RenderMesh(const Entity& entity,
+                   const MaterialHandle& materialHandle) :
+                RenderEntity(entity, materialHandle) {}
 
-        void GetPositions() const;
-        void GetNormals() const;
-        void GetTopology() const;
+        std::vector<glm::vec3> GetPositions() const;
+        std::vector<glm::vec3> GetNormals() const;
+        std::vector<uint32_t> GetIndices() const;
     };
 
 }
 
 
-
-#endif //RBND_MESH_H
+#endif //RBND_RENDER_MESH_H

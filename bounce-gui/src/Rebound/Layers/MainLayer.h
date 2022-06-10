@@ -12,13 +12,12 @@
 #include "Rebound/Widgets/AttributeView.h"
 
 #include "Rebound/Events/ApplicationEvent.h"
-#include "Rebound/Renderer/VertexArray.h"
-#include "Rebound/Renderer/Material.h"
-#include "Rebound/Renderer/Camera.h"
-#include "Rebound/Renderer/FrameBuffer.h"
-#include "Rebound/Renderer/RenderScene.h"
 
 #include "Rebound/Scene/Scene.h"
+
+#include "Rebound/Renderer/Camera.h"
+#include "Rebound/Renderer/RenderDelegate.h"
+#include "Rebound/Renderer/Hop/RenderDelegate.h"
 
 
 namespace Rebound {
@@ -44,8 +43,6 @@ namespace Rebound {
         SceneHierarchyWidget m_sceneHierarchyWid;
         AttributeViewWidget m_attributeViewWid;
 
-        bool m_showPropertyView = true;
-
         // WARNING(tvallentin): Camera used to be a simple attribute instead of
         // a shared pointer to a Camera but this caused crashes when
         // allocating / deallocating memory for strings for an unknown reason.
@@ -53,13 +50,10 @@ namespace Rebound {
         // since then let's keep it that way.
         std::shared_ptr<Camera> m_camera;
 
-        std::shared_ptr<FrameBuffer> m_viewportFrameBuffer;
         float m_viewportWidth, m_viewportHeight;
 
         std::shared_ptr<Scene> m_scene;
-        std::shared_ptr<RenderScene> m_renderScene;
-
-
+        std::shared_ptr<Hop::RenderDelegate> m_renderDelegate;
     };
 
 }

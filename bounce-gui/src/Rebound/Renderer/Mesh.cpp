@@ -3,18 +3,25 @@
 //
 
 #include "Mesh.h"
-#include "Rebound/Renderer/Hop/Mesh.h"
+
+#include "Rebound/Scene/Entities/Mesh.h"
 
 
-namespace Hop {
+namespace Rebound {
 
-    Mesh::Mesh(const Rebound::Entity &entity)
-            : Rebound::RenderMesh(entity) {
-
+    std::vector<glm::vec3> RenderMesh::GetPositions() const {
+        auto mesh = m_entity.As<Mesh>();
+        return mesh.GetPositions();
     }
 
-    void Mesh::Sync(const Rebound::EntityInvalidation &invalidation) {
+    std::vector<glm::vec3> RenderMesh::GetNormals() const {
+        auto mesh = m_entity.As<Mesh>();
+        return mesh.GetNormals();
+    }
 
+    std::vector<uint32_t> RenderMesh::GetIndices() const {
+        auto mesh = m_entity.As<Mesh>();
+        return mesh.GetIndices();
     }
 
 }

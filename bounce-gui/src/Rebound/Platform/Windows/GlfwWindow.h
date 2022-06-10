@@ -6,7 +6,7 @@
 #define RBND_GLFWWINDOW_H
 
 #include "Rebound/Core/Window.h"
-#include "Rebound/Renderer/Context.h"
+#include "Rebound/Renderer/Hop/Context.h"
 
 
 #define GLFW_INCLUDE_NONE  // Avoid double GL inclusion from glad
@@ -36,7 +36,7 @@ namespace Rebound {
         static void HandleGlfwError(int error, const char* description);
 
         GLFWwindow* m_window;
-        RenderContext* m_context;
+        Hop::RenderContext* m_context;
 
         struct WindowData {
             std::string title;

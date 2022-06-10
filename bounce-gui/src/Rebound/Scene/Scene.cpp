@@ -6,6 +6,7 @@
 
 #include "EntityRegistry.h"
 #include "Entity.h"
+
 #include "Entities/Xform.h"
 #include "Entities/Mesh.h"
 #include "Entities/Line.h"
@@ -130,10 +131,14 @@ namespace Rebound {
     std::vector<Entity> Scene::GetRootEntities() {
         std::vector<Entity> roots;
         for (const auto& handle : m_data->GetRootHandles()) {
-            roots.push_back( {handle, this} );
+            roots.emplace_back(handle, this );
         }
 
         return roots;
+    }
+
+    Entity Scene::EntityFromHandle(const EntityDataHandle &handle) {
+        return Entity(handle, this);
     }
 
 }

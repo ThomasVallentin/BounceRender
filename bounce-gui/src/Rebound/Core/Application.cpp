@@ -4,18 +4,12 @@
 
 #include "Application.h"
 
-#include "Rebound/Backends/OpenGL/OpenGLShader.h"
-#include "Rebound/Backends/OpenGL/OpenGLBuffer.h"
-#include "Rebound/Backends/OpenGL/OpenGLContext.h"
-#include "Rebound/Backends/OpenGL/OpenGLRenderer.h"
-
 #include "Rebound/Scene/EntityRegistry.h"
 #include "Rebound/Scene/Entity.h"
 #include "Rebound/Scene/Entities/Xform.h"
 #include "Rebound/Scene/Entities/Mesh.h"
 #include "Rebound/Scene/Entities/Line.h"
 
-#include <glad/glad.h>
 
 namespace Rebound {
 

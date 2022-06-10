@@ -2,8 +2,8 @@
 // Created by Thomas Vallentin on 31/03/2022.
 //
 
-#ifndef TEST_SCENE_H
-#define TEST_SCENE_H
+#ifndef RBND_SCENE_H
+#define RBND_SCENE_H
 
 #include "EntityRegistry.h"
 #include "AttributeValue.h"
@@ -33,7 +33,7 @@ namespace Rebound {
         template<class EntityType>
         EntityType CreateEntity(const std::string &name) {
             // TODO(tvallentin): Ensure EntityType is in the registry before instancing it.
-            return {m_data->CreateHandle<EntityType>(name), this};
+            return { m_data->CreateHandle<EntityType>(name), this };
         }
 
         template<class EntityType>
@@ -43,6 +43,8 @@ namespace Rebound {
 
             return entity;
         }
+
+        Entity EntityFromHandle(const EntityDataHandle& handle);
 
         // == NAMING ==
 
@@ -79,4 +81,4 @@ namespace Rebound {
 
 }
 
-#endif //TEST_SCENE_H
+#endif //RBND_SCENE_H

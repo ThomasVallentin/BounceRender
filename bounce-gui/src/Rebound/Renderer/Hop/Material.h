@@ -27,7 +27,7 @@ namespace Hop {
         }
 
         inline std::shared_ptr<Shader> GetShader() const { return m_shader; }
-        inline void SetUniforms() const {}
+        inline void SetUniforms() const {} // TODO: To implement
 
     private:
         std::shared_ptr<Shader> m_shader;

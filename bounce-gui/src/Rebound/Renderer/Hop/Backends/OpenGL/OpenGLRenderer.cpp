@@ -3,99 +3,106 @@
 //
 
 #include "OpenGLRenderer.h"
+
+#include "Rebound/Renderer/Hop/Material.h"
+#include "Rebound/Renderer/Hop/DrawItem.h"
 #include "Rebound/Renderer/Hop/Mesh.h"
 #include "Rebound/Renderer/Hop/Line.h"
+
+#include "Rebound/Renderer/Camera.h"
+
 #include "Rebound/Core/Logging.h"
 
 #include <glad/glad.h>
 #include <glm/gtx/string_cast.hpp>
 
-#include <map>
+#include <unordered_map>
+
 
 namespace Hop {
 
-    typedef std::map<std::shared_ptr<Material>, std::vector<DrawItem*>> BatchMap;
-    typedef std::pair<std::shared_ptr<Material>, std::vector<DrawItem*>> BatchPair;
+    typedef std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<DrawItem>>> BatchMap;
+    typedef std::pair<std::shared_ptr<Material>, std::vector<std::shared_ptr<DrawItem>>> BatchPair;
 
-    void OpenGLRenderer::Flush() {
+    void OpenGLRenderer::Render(RenderDelegate *delegate, Rebound::Camera *camera) {
         // Clear background
-        // TODO(tvallentin) Needs to be extracted to an OpenGL RendererAPI)
         glClearColor(0.2, 0.2, 0.2, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         BatchMap batchMap;
 
-        // Pseudo "batch", grouping render items by elements
-        // to avoid binding the same material multiple times
-        for (const auto &item : s_DrawItems) {
-            auto material = item->GetMaterial();
-            if ( batchMap.find(material) != batchMap.end() ) {
-                batchMap[material].push_back(item);
-            } else {
-                batchMap.insert(BatchPair(material, std::vector<DrawItem*>{item}));
+        // TODO: Pseudo "batch", grouping render items by elements
+        //       to avoid binding the same material multiple times.
+        //       This need to be extracted to a separate class that handle Batches properly and
+        //       manage batch invalidation when the Scene changes.
+        Rebound::RenderScene* renderScene = delegate->GetRenderScene();
+        for (const auto &it : renderScene->GetRenderIndex()) {
+
+            for (const auto& item : it.second->GetDrawItems()) {
+                std::shared_ptr<Rebound::Material> material = renderScene->GetMaterial(item->GetMaterialHandle());
+                if (!material) {
+                    material = delegate->GetDefaultMaterial();
+                }
+
+                // Casting the Rebound objects to Hop objects
+                auto hopItem = std::dynamic_pointer_cast<DrawItem>(item);
+                auto hopMaterial = std::dynamic_pointer_cast<Material>(material);
+
+                if ( batchMap.find(hopMaterial) != batchMap.end() ) {
+                    batchMap[hopMaterial].push_back(hopItem);
+                } else {
+                    batchMap.insert(BatchPair(hopMaterial,
+                                              std::vector<std::shared_ptr<DrawItem>>{hopItem}));
+                }
             }
         }
+
+        // Send the render hints to OpenGL
+        ApplyRenderHints(delegate->GetRenderHints());
 
         // Iterating over groups of items by material, binding the material once
         // and rendering each item
         for (const auto &batch : batchMap) {
-            HOP_DEBUG("Binding material");
+            RBND_DEBUG("Binding material");
             // Binding first material
             batch.first->Bind();
 
-            HOP_DEBUG("Setting view proj matrix : %s",
-                      glm::to_string(s_sceneData.viewProjectionMatrix).c_str());
+            RBND_DEBUG("Setting view proj matrix : %s",
+                      glm::to_string(camera->GetViewProjectionMatrix()).c_str());
             batch.first->GetShader()->SetMat4("u_viewProjMatrix",
-                                              s_sceneData.viewProjectionMatrix);
+                                              camera->GetViewProjectionMatrix());
 
             for (const auto &item: batch.second) {
+                GLenum drawMode;
+
                 switch (item->GetType()) {
                     case DrawType::Mesh: {
-                        const DrawItems::Mesh *mesh = (DrawItems::Mesh *) item;
-                        mesh->Bind();
-                        glDrawElements(GL_TRIANGLES,
-                                       (int) mesh->GetElementCount(),
-                                       GL_UNSIGNED_INT,
-                                       nullptr);
-                        break;
+                        drawMode = GL_TRIANGLES; break;
                     }
-
                     case DrawType::Line: {
-                        const DrawItems::Line *line = (DrawItems::Line *) item;
-                        line->Bind();
-                        glDrawElements(GL_LINE_STRIP,
-                                       (int) line->GetElementCount(),
-                                       GL_UNSIGNED_INT,
-                                       nullptr);
-                        break;
+                        drawMode = GL_LINE_STRIP; break;
                     }
-
                     case DrawType::None:
                         continue;
                 }
+
+                item->Bind();
+                glDrawElements(drawMode,
+                               (int) item->GetElementCount(),
+                               GL_UNSIGNED_INT,
+                               nullptr);
             }
         }
     }
 
-    void OpenGLRenderer::SetRenderHints(const RenderHints &hints) {
-        HOP_INFO("hints.displayMode : %d", hints.displayMode);
+    void OpenGLRenderer::ApplyRenderHints(const RenderHints &hints) {
         switch (hints.displayMode) {
             case DisplayMode::SmoothShaded:
             case DisplayMode::HardShaded:    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
             case DisplayMode::Wireframe:     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
         }
 
-        switch (hints.lightingMode) {
-            case LightingMode::DefaultLighting:
-            case LightingMode::SceneLighting:
-            case LightingMode::FlatLighting:     break;
-        }
-
-        s_renderHints = hints;
-    }
-
-    void OpenGLRenderer::Render(RenderIndex *index, Rebound::Camera *camera) {
-
+        // TODO: Apply hints.lightingMode
     }
 
 }

@@ -32,7 +32,7 @@ namespace Hop {
 
             std::vector<GLchar> log(logLength);
             glGetShaderInfoLog(vertexShader, logLength, &logLength, log.data());
-            HOP_ERROR("Could not compile vertex shader :\n%s\n", log.data());
+            RBND_ERROR("Could not compile vertex shader :\n%s\n", log.data());
 
             glDeleteShader(vertexShader);
 
@@ -54,7 +54,7 @@ namespace Hop {
 
             std::vector<GLchar> log(logLength);
             glGetShaderInfoLog(fragmentShader, logLength, &logLength, log.data());
-            HOP_ERROR("Could not compile fragment shader :\n%s\n", log.data());
+            RBND_ERROR("Could not compile fragment shader :\n%s\n", log.data());
 
             glDeleteShader(fragmentShader);
 
@@ -79,7 +79,7 @@ namespace Hop {
 
             std::vector<GLchar> log(logLength);
             glGetProgramInfoLog(m_programId, logLength, &logLength, log.data());
-            HOP_ERROR("Could not link shader : \n%s\n", log.data());
+            RBND_ERROR("Could not link shader : \n%s\n", log.data());
 
             glDeleteProgram(m_programId);
 

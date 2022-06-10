@@ -7,13 +7,13 @@
 
 #include "Rebound/Renderer/Hop/RenderDelegate.h"
 
+
 namespace Hop {
 
     class OpenGLRenderer {
     public:
-        static void Render(RenderIndex *index, Rebound::Camera *camera);
-
-        static void SetRenderHints(const RenderHints& hints);
+        static void Render(RenderDelegate *delegate, Rebound::Camera *camera);
+        static void ApplyRenderHints(const RenderHints& hints);
     };
 
 }

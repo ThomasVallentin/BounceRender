@@ -5,25 +5,24 @@
 #ifndef HOP_RENDER_LINE_H
 #define HOP_RENDER_LINE_H
 
-#include "Item.h"
+#include "Rebound/Renderer/Line.h"
 
+#include <memory>
+#include <utility>
 
-namespace Hop::DrawItems {
+namespace Hop {
 
-    class Line : public DrawItem {
+    class RenderLine : public Rebound::RenderLine {
     public:
-        Line(std::shared_ptr<VertexArray> vertexArray, std::shared_ptr<Material> material)
-                : DrawItem(std::move(material)),
-                  m_vertexArray(std::move(vertexArray)) {}
+        RenderLine(const Rebound::Entity& entity,
+                   const Rebound::MaterialHandle& handle) :
+                Rebound::RenderLine(entity, handle) {}
 
-
-        inline uint32_t GetElementCount() const {
-            return m_vertexArray->GetIndexBuffer()->GetCount();
-        }
+        void Sync(const Rebound::EntityInvalidation &invalidation) override;
 
     };
 
 }
 
 
-#endif //HOP_LINE_H
+#endif //HOP_RENDER_LINE_H

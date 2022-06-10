@@ -10,7 +10,7 @@
 
 #include <glm/gtx/string_cast.hpp>
 
-namespace Hop {
+namespace Rebound {
 
     Camera::Camera(const float &fov, const float &aspectRatio, const float &nearClip,
                    const float &farClip)

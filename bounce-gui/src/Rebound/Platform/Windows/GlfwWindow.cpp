@@ -8,7 +8,7 @@
 #include "Rebound/Events/MouseEvent.h"
 #include "Rebound/Events/KeyEvent.h"
 
-#include "Rebound/Backends/OpenGL/OpenGLContext.h"
+#include "Rebound/Renderer/Hop/Backends/OpenGL/OpenGLContext.h"
 
 namespace Rebound {
 
@@ -43,7 +43,7 @@ namespace Rebound {
                                   nullptr,
                                   nullptr);
 
-        m_context = new OpenGLContext(m_window);
+        m_context = new Hop::OpenGLContext(m_window);
         m_context->Init();
 
         glfwSetWindowUserPointer(m_window, &m_windowData);

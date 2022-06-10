@@ -5,34 +5,38 @@
 #ifndef RBND_RENDERSCENE_H
 #define RBND_RENDERSCENE_H
 
-#include <unordered_map>
-#include <set>
-#include "RenderEntity.h"
+#include "Material.h"
 
 #include "Rebound/Scene/Entity.h"
+
+#include <unordered_map>
+#include <set>
 
 
 namespace Rebound {
 
     class RenderDelegate;
+    class RenderEntity;
 
     enum EntityInvalidationType {
         Null                  = 0,
         Added                 = 1 << 0,
         Deleted               = 1 << 1,
-        TransformChanged      = 1 << 2,
-        TopologyChanged       = 1 << 3,
-        CompleteInvalidation  = 1 << 4,
+        VisibilityChanged     = 1 << 2,
+        TransformChanged      = 1 << 3,
+        TopologyChanged       = 1 << 4,
+        MaterialAssignation   = 1 << 5,
+        CompleteInvalidation  = 1 << 6,
     };
 
     struct EntityInvalidation {
-        EntityDataHandle entityHandle;
         EntityInvalidationType type;
         std::set<std::string> attributes;
     };
 
-    typedef std::vector<EntityInvalidation> EntityInvalidationVector;
+    typedef std::unordered_map<EntityDataHandle, EntityInvalidation> EntityInvalidationMap;
     typedef std::unordered_map<EntityDataHandle, RenderEntity*> RenderIndex;
+    typedef std::unordered_map<MaterialHandle, std::shared_ptr<Material>> MaterialIndex;
 
     class RenderScene {
     public:
@@ -44,21 +48,29 @@ namespace Rebound {
 
         inline bool IsUpToDate() const { return m_invalidations.empty(); }
         void Sync();
-        void Flush();
+        void Clear();
+
+        Entity GetEntity(const EntityDataHandle& handle) const;
+        std::shared_ptr<Material> GetMaterial(const MaterialHandle& handle) const;
+
+        inline RenderIndex GetRenderIndex() const { return m_renderIndex; }
 
     private:
-        void AddRenderEntity(const EntityDataHandle& handle);
+        bool AddRenderEntity(const EntityDataHandle& handle);
+        bool AddMaterial(const MaterialHandle& handle);
         void DeleteRenderEntity(const EntityDataHandle& handle);
 
         void OnEntityAdded(Entity &entity);
-        void OnEntityInvalidated(const EntityInvalidation &invalidation);
+        void OnEntityInvalidated(const EntityDataHandle &entityHandle,
+                                 const EntityInvalidation &invalidation);
 
         RenderIndex m_renderIndex;
-        EntityInvalidationVector m_invalidations;
+        MaterialIndex m_materialIndex;
+        EntityInvalidationMap m_invalidations;
 
-        Scene* m_scene;  // TODO: Should be a weak pointer
+        Scene* m_scene;  // TODO: Should probably be a weak pointer
 
-        RenderDelegate* m_delegate;
+        RenderDelegate* m_renderDelegate;
     };
 
 }

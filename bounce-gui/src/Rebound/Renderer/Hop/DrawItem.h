@@ -11,6 +11,8 @@
 #include "Material.h"
 #include "VertexArray.h"
 
+#include "Rebound/Renderer/DrawItem.h"
+
 
 namespace Hop {
 
@@ -20,13 +22,13 @@ namespace Hop {
         Line = 2
     };
 
-    class DrawItem {
+    class DrawItem : public Rebound::DrawItem {
     public:
         DrawItem(std::shared_ptr<VertexArray> vertexArray,
-                 std::shared_ptr<Material> material,
-                 const DrawType &type) :
+                 const DrawType &type,
+                 const Rebound::MaterialHandle& materialHandle) :
+                Rebound::DrawItem(materialHandle),
                 m_vertexArray(std::move(vertexArray)),
-                m_material(std::move(material)),
                 m_drawType(type),
                 m_transformMatrix() {}
 
@@ -36,7 +38,7 @@ namespace Hop {
         inline virtual void Unbind() const { m_vertexArray->Unbind(); }
 
         inline float* GetTransform() { return m_transformMatrix; }
-        std::shared_ptr<Material> GetMaterial() { return m_material; }
+
         inline uint32_t GetElementCount() const {
             return m_vertexArray->GetIndexBuffer()->GetCount();
         }
@@ -45,7 +47,6 @@ namespace Hop {
 
     protected:
         float m_transformMatrix[16];
-        std::shared_ptr<Material> m_material;
         std::shared_ptr<VertexArray> m_vertexArray;
 
         DrawType m_drawType;

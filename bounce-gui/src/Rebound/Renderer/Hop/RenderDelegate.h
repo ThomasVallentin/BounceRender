@@ -5,7 +5,8 @@
 #ifndef HOP_RENDERER_H
 #define HOP_RENDERER_H
 
-#include "Item.h"
+#include "DrawItem.h"
+#include "FrameBuffer.h"
 
 #include "Rebound/Renderer/RenderDelegate.h"
 
@@ -27,7 +28,6 @@ namespace Hop {
     enum class LightingMode {
         DefaultLighting = 0,
         SceneLighting,
-        FlatLighting,
     };
 
     struct RenderHints {
@@ -37,24 +37,31 @@ namespace Hop {
 
     class RenderDelegate : public Rebound::RenderDelegate {
     public:
-        RenderDelegate() : Rebound::RenderDelegate(nullptr) {}
-        explicit RenderDelegate(Rebound::RenderScene *scene) : Rebound::RenderDelegate(scene) {}
+        RenderDelegate();
+        explicit RenderDelegate(Rebound::RenderScene *scene);
 
         bool Render(Rebound::Camera *camera) override;
 
         Rebound::RenderEntity *CreateRenderEntity(const Rebound::EntityDataHandle &handle) override;
+        std::shared_ptr<Rebound::Material> CreateMaterial(const Rebound::EntityDataHandle &handle) override;
 
         inline static RenderAPI GetAPI()  { return s_renderApi; }
 
-        inline static RenderHints GetRenderHints()  { return s_renderHints; }
-        static void SetRenderHints(const RenderHints &hints);
+        inline RenderHints GetRenderHints() { return m_renderHints; }
+        inline void SetRenderHints(const RenderHints &hints) { m_renderHints = hints; }
+
+        std::shared_ptr<Rebound::FrameBuffer>
+        CreateFrameBuffer(Rebound::FrameBufferSpec *spec) const override;
 
     protected:
-        static std::vector<DrawItem *> s_DrawItems;
-
         static RenderAPI s_renderApi;
-        static RenderHints s_renderHints;
+
+        RenderHints m_renderHints;
+
+    private:
+        void Initialize();
     };
+
 }
 
 

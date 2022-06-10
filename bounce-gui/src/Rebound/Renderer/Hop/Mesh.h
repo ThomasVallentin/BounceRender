@@ -7,18 +7,17 @@
 
 #include "Rebound/Renderer/Mesh.h"
 
-#include "Item.h"
-#include "VertexArray.h"
-
 #include <memory>
 #include <utility>
 
 
 namespace Hop {
 
-    class Mesh : public Rebound::RenderMesh {
+    class RenderMesh : public Rebound::RenderMesh {
     public:
-        Mesh(const Rebound::Entity& entity);
+        RenderMesh(const Rebound::Entity& entity,
+                   const Rebound::MaterialHandle& handle) :
+                Rebound::RenderMesh(entity, handle) {}
 
         void Sync(const Rebound::EntityInvalidation &invalidation) override;
 

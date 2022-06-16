@@ -6,6 +6,8 @@
 #include "RenderDelegate.h"
 #include "RenderEntity.h"
 
+#include "Rebound/Scene/SceneNotifier.h"
+
 #include "Rebound/Core/Logging.h"
 
 
@@ -13,7 +15,8 @@ namespace Rebound {
 
     RenderScene::RenderScene(RenderDelegate *delegate)
             : m_renderDelegate(delegate),
-              m_scene(nullptr) {
+              m_scene(nullptr),
+              m_sceneObserver(this) {
     }
 
     RenderScene::~RenderScene() {
@@ -22,10 +25,13 @@ namespace Rebound {
 
     void RenderScene::BindScene(Scene *scene) {
         if (m_scene) {
-            Clear();
+            UnbindScene();
         }
 
         m_scene = scene;
+        if (scene) {
+            Notifier<Scene*>::RegisterObserver(scene, &m_sceneObserver);
+        }
 
         // Add all entities from the scene
         for (const auto root: m_scene->GetRootEntities()) {
@@ -39,6 +45,7 @@ namespace Rebound {
     void RenderScene::UnbindScene() {
         if (m_scene) {
             Clear();
+            Notifier<Scene*>::RevokeObserver(m_scene, &m_sceneObserver);
         }
 
         m_scene = nullptr;
@@ -58,8 +65,11 @@ namespace Rebound {
             // Entity updated case
             } else {
                 auto rIndexIt = m_renderIndex.find(entityHandle);
-                if (rIndexIt != m_renderIndex.end())
+                if (rIndexIt != m_renderIndex.end()) {
+                    RBND_DEBUG("Synchronizing RenderEntity \"%s\"",
+                               m_scene->EntityFromHandle(rIndexIt->first).GetName().c_str());
                     rIndexIt->second->Sync(invalidation);
+                }
             }
         }
 
@@ -82,6 +92,7 @@ namespace Rebound {
 
     void RenderScene::OnEntityInvalidated(const EntityDataHandle &entityHandle,
                                           const EntityInvalidation &invalidation) {
+        RBND_DEBUG("Entity invalidated %s", GetEntity(entityHandle).GetName().c_str());
         auto it = m_invalidations.find(entityHandle);
 
         // Entity is already invalid, merging the new invalidation with the existing one
@@ -145,6 +156,41 @@ namespace Rebound {
             return it->second;
 
         return nullptr;
+    }
+
+    void RenderScene::_SceneObserver::Notified(Notice* notice) {
+        auto sceneNotice = dynamic_cast<SceneNotice*>(notice);
+        switch (sceneNotice->GetType()) {
+            case SceneNoticeType::EntitiesAdded:  // TODO: To implement
+            case SceneNoticeType::EntitiesRemoved: break;  // TODO: To implement
+
+            case SceneNoticeType::EntitiesChanged: {
+                auto changedNotice = dynamic_cast<EntityChangedNotice*>(sceneNotice);
+                auto [entity, attributes] = changedNotice->GetAffectedAttribute();
+
+                // If some transform related attributes changed, we notify the whole hierarchy
+                // that their transform has changed
+                for (const auto& attr : attributes) {
+                    if (attr == "translate" || attr == "rotate" || attr == "scale") {
+                        auto traversalFunc = [this](Entity entt) {
+                            this->m_renderscene->OnEntityInvalidated(
+                                    entt.GetHandle(),
+                                    { EntityInvalidationType::TransformChanged });
+                        };
+
+                        entity.GetScene()->Traverse(&entity, traversalFunc);
+                        break;
+                    }
+                }
+
+                // If there are some modified attributes left, we schedule a complete invalidation
+                if (!attributes.empty()) {
+                    m_renderscene->OnEntityInvalidated(entity.GetHandle(),
+                                                       { EntityInvalidationType::CompleteInvalidation,
+                                                         attributes });
+                }
+            }
+        }
     }
 
 }

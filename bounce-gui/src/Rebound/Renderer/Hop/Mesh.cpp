@@ -7,6 +7,8 @@
 
 #include "Rebound/Renderer/RenderScene.h"
 
+#include <glm/gtx/string_cast.hpp>
+
 namespace Hop {
 
 
@@ -19,10 +21,15 @@ namespace Hop {
             return;
 
         auto vtxArray = VertexArray::Create();
-        vtxArray->Bind();
 
         // Vertex Buffer
-        auto positions = GetPositions();
+        std::vector<glm::vec3> positions = GetPositions();
+        glm::mat4 worldMatrix = ComputeLocalToWorldMatrix();
+        for (auto &pos : positions) {
+            auto pos_ = worldMatrix * glm::vec4(pos, 1.0);
+            pos = glm::vec3(pos_);
+        }
+
         float *vertices = new float[positions.size() * 3];
 
         for (size_t i = 0; i < positions.size() ; i++) {

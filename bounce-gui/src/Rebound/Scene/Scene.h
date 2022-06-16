@@ -59,7 +59,7 @@ namespace Rebound {
                           AttributeValue &value) const;
         bool SetAttribute(const Entity *entity,
                           const std::string &name,
-                          const AttributeValue& value) const;
+                          const AttributeValue& value);
 
         // == HIERARCHY ==
 

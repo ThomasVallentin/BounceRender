@@ -10,6 +10,8 @@
 
 #include "Rebound/Scene/Entity.h"
 
+#include <glm/glm.hpp>
+
 
 namespace Rebound {
 
@@ -27,6 +29,8 @@ namespace Rebound {
         virtual void Sync(const EntityInvalidation& invalidation) = 0;
 
         inline std::vector<std::shared_ptr<DrawItem>> GetDrawItems() const { return m_drawItems; }
+
+        glm::mat4 ComputeLocalToWorldMatrix() const;
 
     protected:
         const Entity m_entity;

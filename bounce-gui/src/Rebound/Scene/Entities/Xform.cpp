@@ -6,15 +6,15 @@
 
 #include <glm/matrix.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/matrix_operation.hpp>
 #include <glm/gtx/quaternion.hpp>
+
 
 namespace Rebound {
 
     glm::mat4 Xform::ComputeLocalMatrix() const {
-        auto translate = glm::translate(glm::mat4(), GetScale());
-        auto rotate = glm::toMat4(glm::quat(GetRotate()));
-        auto scale = glm::scale(glm::mat4(), GetScale());
+        auto translate = glm::translate(glm::mat4(1.0), GetTranslate());
+        auto rotate = glm::toMat4(glm::quat(glm::radians(GetRotate())));
+        auto scale = glm::scale(glm::mat4(1.0), GetScale());
 
         return translate * rotate * scale;
     }

@@ -6,6 +6,7 @@
 
 #include "EntityRegistry.h"
 #include "Entity.h"
+#include "SceneNotifier.h"
 
 #include "Entities/Xform.h"
 #include "Entities/Mesh.h"
@@ -89,10 +90,16 @@ namespace Rebound {
 
     bool Scene::SetAttribute(const Entity *entity,
                              const std::string &name,
-                             const AttributeValue& value) const {
-        return m_data->SetAttribute(entity->m_dataHandle,
-                                    name,
-                                    value);
+                             const AttributeValue &value) {
+        bool result = m_data->SetAttribute(entity->m_dataHandle,
+                                           name,
+                                           value);
+        if (result) {
+            SceneNotifier::NotifyEntityChanged(this,
+                                               {*entity, {name}});
+        }
+
+        return result;
     }
 
     // == HIERARCHY ==
@@ -131,14 +138,16 @@ namespace Rebound {
     std::vector<Entity> Scene::GetRootEntities() {
         std::vector<Entity> roots;
         for (const auto& handle : m_data->GetRootHandles()) {
-            roots.emplace_back(handle, this );
+            roots.push_back({ handle, this } );
         }
 
         return roots;
     }
 
     Entity Scene::EntityFromHandle(const EntityDataHandle &handle) {
-        return Entity(handle, this);
+        return {handle, this};
     }
+
+    DEFINE_NOTIFIER_SENDER_TYPE(Scene*);
 
 }

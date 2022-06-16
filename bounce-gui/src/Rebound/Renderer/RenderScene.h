@@ -8,6 +8,7 @@
 #include "Material.h"
 
 #include "Rebound/Scene/Entity.h"
+#include "Rebound/Core/Notifier.h"
 
 #include <unordered_map>
 #include <set>
@@ -56,6 +57,19 @@ namespace Rebound {
         inline RenderIndex GetRenderIndex() const { return m_renderIndex; }
 
     private:
+        class _SceneObserver : public Observer {
+        public:
+            _SceneObserver(RenderScene* renderScene) :
+                    m_renderscene(renderScene) {}
+
+            void Notified(Notice* notice) override;
+
+        private:
+            RenderScene* m_renderscene;
+        };
+
+        friend _SceneObserver;
+
         bool AddRenderEntity(const EntityDataHandle& handle);
         bool AddMaterial(const MaterialHandle& handle);
         void DeleteRenderEntity(const EntityDataHandle& handle);
@@ -64,11 +78,13 @@ namespace Rebound {
         void OnEntityInvalidated(const EntityDataHandle &entityHandle,
                                  const EntityInvalidation &invalidation);
 
+
         RenderIndex m_renderIndex;
         MaterialIndex m_materialIndex;
         EntityInvalidationMap m_invalidations;
 
         Scene* m_scene;  // TODO: Should probably be a weak pointer
+        _SceneObserver m_sceneObserver;
 
         RenderDelegate* m_renderDelegate;
     };

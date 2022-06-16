@@ -63,12 +63,8 @@ namespace Hop {
         // Iterating over groups of items by material, binding the material once
         // and rendering each item
         for (const auto &batch : batchMap) {
-            RBND_DEBUG("Binding material");
             // Binding first material
             batch.first->Bind();
-
-            RBND_DEBUG("Setting view proj matrix : %s",
-                      glm::to_string(camera->GetViewProjectionMatrix()).c_str());
             batch.first->GetShader()->SetMat4("u_viewProjMatrix",
                                               camera->GetViewProjectionMatrix());
 

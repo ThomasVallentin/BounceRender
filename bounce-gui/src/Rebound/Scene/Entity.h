@@ -118,7 +118,7 @@ std::vector<AttributeSpec> Type::GetAllAttributeDefaults() { \
         }
 
         bool IsValid() const {
-            return (!m_dataHandle || !m_scene);
+            return (m_dataHandle && m_scene);
         }
 
         inline bool operator==(const Entity& other) const {

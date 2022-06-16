@@ -35,3 +35,5 @@ target_link_libraries(Rebound PUBLIC
         glm::glm
         OpenGL::GL
         Boost::boost)
+
+target_link_options(Rebound PUBLIC /NODEFAULTLIB:MSVCRT)

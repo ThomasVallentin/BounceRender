@@ -135,7 +135,6 @@ namespace Bounce {
     }
 
     void readAlembic(const std::string &filename, Scene &scene) {
-        std::cerr << filename << std::endl;
         IArchive archive;
         IFactory factory;
         factory.setPolicy(Alembic::Abc::ErrorHandler::kNoisyNoopPolicy);
@@ -150,7 +149,6 @@ namespace Bounce {
     }
 
     Scene Scene::Open(const std::string &filename) {
-        std::cerr << filename << std::endl;
         printf("# Loading %s...\n", filename.c_str());
 
         Scene scene;

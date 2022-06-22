@@ -14,7 +14,6 @@ namespace Bounce {
     class Scene;
 
     struct Camera {
-    public:
         Mat4f transform;
         float f{};
     };

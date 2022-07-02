@@ -3,17 +3,20 @@
 //
 
 #include "BSDF.h"
+#include "Ray.h"
 #include "BxDF.h"
 #include "Random.h"
 
-#include <random>
-
 namespace Bounce {
+
+    BSDF::BSDF(const Ray &ray) :
+            worldToLocal(Imath::extractQuat(Imath::rotationMatrix(ray.Ng,
+                                                                  Vec3f(0, 0, 1)))) {}
+
 
     Vec3f BSDF::WorldToLocal(const Vec3f &vec) const {
         return worldToLocal.rotateVector(vec);
     }
-
 
     Vec3f BSDF::LocalToWorld(const Vec3f &vec) const {
         return worldToLocal.inverse().rotateVector(vec);

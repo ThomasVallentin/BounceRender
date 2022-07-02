@@ -4,6 +4,7 @@
 
 #include "BounceRender/Core/Scene.h"
 #include "BounceRender/Core/Raytracer.h"
+#include "BounceRender/Core/Camera.h"
 
 #include <OpenImageIO/imageio.h>
 
@@ -13,18 +14,22 @@ using namespace Bounce;
 int main() {
     InitializeBounce();
 
-    Scene scene = Scene::Open(R"(C:\dev\BounceRender\bounce-render\resources\geometries\wheelBarrow\wheelBarrow_LOD0.abc)");
+    Scene scene = Scene::Open(R"(C:\dev\BounceRender\bounce-render\resources\geometries\wheelBarrow\wheelBarrow_LOD3.abc)");
     scene.Commit();
 
-    Mat4f camTransform;
-    camTransform.rotate(Vec3f(0.4, 2.5, 0));
-    camTransform.translate(Vec3f(0, 0, -200));
-    Camera camera{camTransform, 800};
-
-    const int width = 1000, height = 1000, channels = 3;
+    const int width    = 640;
+    const int height   = 360;
+    const int channels = 3;
     float *pixels = new float[width * height * channels];
     Raytracer tracer(&scene);
-    tracer.Render(pixels, width, height, camera);
+
+    Mat4f camTransform;
+//    camTransform.rotate(Vec3f(0, M_PI_2, 0));
+    camTransform.rotate(Vec3f(-0.4, M_PI_2 - 1, 0));
+    camTransform.translate(Vec3f(0, 18, 380));
+    ThinLensCamera camera(camTransform, {width, height}, {21.946, 16.002}, 50.0, 330.0, 1.5);
+
+    tracer.Render(pixels, width, height, &camera);
 
     ReleaseBounce();
 

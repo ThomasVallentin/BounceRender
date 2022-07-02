@@ -7,7 +7,7 @@
 
 namespace Bounce {
 
-    void LambertMaterial::FillBSDF(const RTCRayHit &rayhit, BSDF &bsdf) const {
+    void LambertMaterial::FillBSDF(const Ray &ray, BSDF &bsdf) const {
         bsdf.AddBxDF(new Lambertian(diffuseColor));
     }
 

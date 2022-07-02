@@ -6,7 +6,7 @@
 
 namespace Bounce {
 
-// From GI Compendium (34)
+    // From GI Compendium (34)
     Vec3f UniformHemisphereSample(const Vec2f &sample) {
         float z = sample.y;
         float u = std::sqrt(std::max(0.0f, 1.0f - z * z));
@@ -19,12 +19,12 @@ namespace Bounce {
         return INV_2_PI;
     }
 
-// From Shirley & Chiu "A Low Distortion Map Between Disk and Square"
+    // From Shirley & Chiu "A Low Distortion Map Between Disk and Square"
     Vec2f ConcentricDiskSample(const Vec2f &sample) {
         Vec2f u = sample * 2 - Vec2f(1.0f, 1.0f);
 
         if (u.x == 0 && u.y == 0)
-            return Vec2f(0, 0);
+            return {0, 0};
 
         float r, theta;
 
@@ -40,7 +40,15 @@ namespace Bounce {
         return r * Vec2f(std::cos(theta), std::sin(theta));
     }
 
-// From GI Compendium (35)
+    Vec2f ConcentricDiskSample() {
+        return ConcentricDiskSample(RandomVector2(-1.0f, 1.0f));
+    }
+
+    float ConcentricDiskPdf() {
+        return INV_PI;
+    }
+
+    // From GI Compendium (35)
     Vec3f CosineHemisphereSample(const Vec2f &sample) {
         Vec2f u = ConcentricDiskSample(sample);
         float z = std::sqrt(std::max(0.0f, 1 - u.x * u.x - u.y * u.y));

@@ -7,17 +7,13 @@
 
 #include <vector>
 
-#include "embree3/rtcore_ray.h"
-
 #include "Bounce.h"
 
 namespace Bounce {
 
     class BSDF {
     public:
-        explicit BSDF(const RTCRayHit &rayhit) :
-                worldToLocal(Imath::extractQuat(Imath::rotationMatrix(HitNormal(rayhit),
-                                                                      Vec3f(0, 0, 1)))) {}
+        explicit BSDF(const Ray &ray);
 
         void AddBxDF(BxDF *bxdf) {
             bxdfs[bxdfCount++] = bxdf;

@@ -5,19 +5,12 @@
 #ifndef BOUNCE_RAYTRACER_H
 #define BOUNCE_RAYTRACER_H
 
-#include <cstdio>
-
 #include "Bounce.h"
 
+#include <cstdio>
+
+
 namespace Bounce {
-
-    class Scene;
-
-    struct Camera {
-    public:
-        Mat4f transform;
-        float f{};
-    };
 
     class Raytracer {
     public:
@@ -28,16 +21,16 @@ namespace Bounce {
         void Render(float *pixels,
                     const unsigned int &width,
                     const unsigned int &height,
-                    const Camera &camera) const;
+                    const Camera *camera) const;
 
     protected:
         void RenderPixel(unsigned int x, unsigned int y,
                          float *pixels,
                          unsigned int width,
                          unsigned int height,
-                         const Camera &camera) const;
+                         const Camera *camera) const;
 
-        Color3f ComputeIllumination(RTCRayHit rayhit, int depth) const;
+        Color3f ComputeIllumination(Ray &ray, int depth=0) const;
 
         Scene *scene;
     };

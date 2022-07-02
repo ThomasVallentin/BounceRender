@@ -15,7 +15,7 @@ namespace Bounce {
 
         explicit LambertMaterial(const Color3f &diffuseColor) : diffuseColor(diffuseColor) {}
 
-        void FillBSDF(const RTCRayHit &rayhit, BSDF &bsdf) const override;
+        void FillBSDF(const Ray &ray, BSDF &bsdf) const override;
 
     private:
         Color3f diffuseColor;

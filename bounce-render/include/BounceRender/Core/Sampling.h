@@ -10,12 +10,17 @@
 
 namespace Bounce {
 
-    Vec3f UniformHemisphereSample(const Vec2f &sample);
+    // Disk sampling
+    Vec2f ConcentricDiskSample(const Vec2f &sample);
+    Vec2f ConcentricDiskSample();
+    float ConcentricDiskPdf();
 
+    // Hemisphere sampling
+
+    Vec3f UniformHemisphereSample(const Vec2f &sample);
     float UniformHemispherePdf();
 
     Vec3f CosineHemisphereSample(const Vec2f &sample);
-
     float CosineHemispherePdf(const float &cosTheta);
 
 }

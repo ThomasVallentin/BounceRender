@@ -17,7 +17,7 @@ namespace Bounce {
     public:
         Material() = default;
 
-        virtual void FillBSDF(const RTCRayHit &rayhit, BSDF &bsdf) const = 0;
+        virtual void FillBSDF(const Ray &ray, BSDF &bsdf) const = 0;
     };
 
 }

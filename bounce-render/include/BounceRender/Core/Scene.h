@@ -18,11 +18,9 @@ namespace Bounce {
         Scene();
 
         static Scene Open(const std::string &filename);
-
         bool LoadTestGeometry();
 
         void Commit() { rtcCommitScene(rtcScene); }
-
         void Release() { rtcReleaseScene(rtcScene); }
 
     public:

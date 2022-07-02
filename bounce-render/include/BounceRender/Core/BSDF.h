@@ -26,8 +26,8 @@ namespace Bounce {
         Vec3f LocalToWorld(const Vec3f &vec) const;
 
     private:
-        // TODO: Optimize this
-        Quatf worldToLocal;
+        // TODO: worldToLocal should be a matrix4
+        Mat4f worldToLocal, localToWorld;
         static const int maxBxdfs = 8;
         int bxdfCount = 0;
         BxDF *bxdfs[maxBxdfs];

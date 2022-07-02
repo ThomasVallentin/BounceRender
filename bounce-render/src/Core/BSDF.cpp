@@ -9,21 +9,25 @@
 
 namespace Bounce {
 
-    BSDF::BSDF(const Ray &ray) :
-            worldToLocal(Imath::extractQuat(Imath::rotationMatrix(ray.Ng,
-                                                                  Vec3f(0, 0, 1)))) {}
+    BSDF::BSDF(const Ray &ray) {
+        worldToLocal = Imath::rotationMatrix(ray.Ng, Vec3f(0, 0, 1));
+        localToWorld = worldToLocal.inverse();
+    }
 
 
     Vec3f BSDF::WorldToLocal(const Vec3f &vec) const {
-        return worldToLocal.rotateVector(vec);
+        Vec3f localVec;
+        worldToLocal.multDirMatrix(vec, localVec);
+        return localVec;
     }
 
     Vec3f BSDF::LocalToWorld(const Vec3f &vec) const {
-        return worldToLocal.inverse().rotateVector(vec);
+        Vec3f worldVec;
+        localToWorld.multDirMatrix(vec, worldVec);
+        return worldVec;
     }
 
     Color3f BSDF::Sample(const Vec3f &woWorld, Vec3f &wiWorld, float &pdf) const {
-
         // Choose random bxdf
         int sampledIndex = RandomInteger<int>(0, bxdfCount - 1);
         BxDF *sampledBxdf = bxdfs[sampledIndex];

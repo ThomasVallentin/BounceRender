@@ -27,7 +27,7 @@ namespace Bounce {
 
     public:
         RTCScene rtcScene;
-        Material *defaultMaterial = new LambertMaterial();
+        Material *defaultMaterial = new LambertMaterial(Color3f(0.6, 0.8, 1.0));
         // std::vector<Material> materials;
         // std::map<size_t, Material*> bindings;
     };

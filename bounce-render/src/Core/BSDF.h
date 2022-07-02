@@ -27,7 +27,7 @@ namespace Bounce {
 
     private:
         // TODO: worldToLocal should be a matrix4
-        Quatf worldToLocal;
+        Mat4f worldToLocal, localToWorld;
         static const int maxBxdfs = 8;
         int bxdfCount = 0;
         BxDF *bxdfs[maxBxdfs];

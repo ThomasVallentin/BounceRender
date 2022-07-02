@@ -60,40 +60,42 @@ namespace Bounce {
         // Intersect ray with the scene
         rtcIntersect1(scene->rtcScene, &context, AsRTCRayHit(ray));
 
-        // If the ray hit, set the color to red and send a shadow ray
-        if (ray.geomID != RTC_INVALID_GEOMETRY_ID) {
-            Vec3f wo = -ray.direction;
-            Vec3f wi;
-
-            // Generating BSDF and giving it to the material to fill it with BxDFs
-            BSDF bsdf(ray);
-            scene->defaultMaterial->FillBSDF(ray, bsdf);
-
-            // Evaluating the BSDF
-            float pdf;
-            Color3f f = bsdf.Sample(wo, wi, pdf);
-
-            // Returning black if pdf is null (to avoid divide by zero error)
-            if (pdf == 0)
-                return Color3f(0.0f);
-
-            // Returning black if the transmitted light is too low
-            if (f.x + f.y + f.z < 10e-4)
-                return Color3f(0.0f);
-
-            // Reverting the normal if it is not in the same direction as the incoming ray
-            Vec3f N = ray.Ng.normalized();
-            if (wo.dot(N) < 0) {
-                N = -N;
-            }
-
-            // Moving the hit point a tiny bit along the normal to avoid hitting the same surface again
-            ray = Ray(ComputeHitPoint(ray) + N * 10e-4, wi);
-
-            return f * ComputeIllumination(ray, depth) * std::abs(wi.dot(N)) / pdf;
+        // If the ray doesn't hit anything, "sample"a pseudo environment light
+        if (ray.geomID == RTC_INVALID_GEOMETRY_ID) {
+            return Color3f(ray.direction.y * 0.5f + 0.5f);
         }
 
-        return Color3f(ray.direction.y * 0.5f + 0.5f);
+        Vec3f wo = -ray.direction;
+        Vec3f wi;
+
+        // Generating BSDF and giving it to the material to fill it with BxDFs
+        BSDF bsdf(ray);
+        scene->defaultMaterial->FillBSDF(ray, bsdf);
+
+        // Evaluating the BSDF
+        float pdf;
+        Color3f f = bsdf.Sample(wo, wi, pdf);
+
+        // Returning black if pdf is null (to avoid divide by zero error)
+        if (pdf == 0)
+            return Color3f(0.0f);
+
+        // Returning black if the transmitted light is too low
+        if (f.x + f.y + f.z < 10e-4)
+            return Color3f(0.0f);
+
+        // Reverting the normal if it is not in the same direction as the incoming ray
+        Vec3f N = ray.Ng.normalized();
+        if (wo.dot(N) < 0) {
+            N = -N;
+        }
+
+        // Moving the hit point a tiny bit along the normal to avoid hitting the same surface again
+        ray = Ray(ComputeHitPoint(ray) + N * 10e-4, wi);
+
+        return f * ComputeIllumination(ray, depth) * std::abs(wi.dot(N)) / pdf;
+
+
     }
 
 }

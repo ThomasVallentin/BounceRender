@@ -26,7 +26,7 @@ namespace Rebound {
                const float &farClip);
 
         void OnUpdate();
-        void OnEvent(Rebound::Event &event);
+        void OnEvent(Event &event);
 
         void SetViewportSize(const float &width, const float &height);
 
@@ -34,6 +34,8 @@ namespace Rebound {
         glm::vec3 GetUpDirection() const;
         glm::vec3 GetSideDirection() const;
         glm::quat GetOrientation() const;
+        glm::vec3 GetEulerAngles() const;
+        float GetFov() const;
         inline const glm::vec3& GetPosition() const { return m_position; }
 
         inline const glm::mat4& GetViewMatrix() { return m_viewMatrix; };
@@ -49,8 +51,8 @@ namespace Rebound {
         void MouseRotate(const float &deltaX, const float &deltaY);
         void MouseZoom(const float &deltaX);
 
-        bool OnMouseScrollEvent(Rebound::MouseScrolledEvent &event);
-        bool OnKeyPressedEvent(Rebound::KeyPressedEvent &event);
+        bool OnMouseScrollEvent(MouseScrolledEvent &event);
+        bool OnKeyPressedEvent(KeyPressedEvent &event);
 
         glm::vec2 m_prevMousePos;
 
@@ -66,8 +68,8 @@ namespace Rebound {
         glm::vec3 m_position { 0.0f, 0.0f, 5.0f};
         glm::vec3 m_focalPoint { 0.0f, 0.0f, 0.0f};
 
-        float m_pitch = 0.5f;
-        float m_yaw = -0.5f;
+        float m_pitch = -0.5f;
+        float m_yaw = 0.5f;
         float m_roll = 0.0f;
 
         glm::mat4 m_viewMatrix;

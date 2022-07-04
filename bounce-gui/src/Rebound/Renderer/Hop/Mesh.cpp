@@ -12,7 +12,8 @@
 namespace Hop {
 
 
-    void RenderMesh::Sync(const Rebound::EntityInvalidation &invalidation) {
+    void RenderMesh::Sync(const Rebound::EntityInvalidation &invalidation,
+                          Rebound::RenderSharedData* sharedData) {
         // TODO: Extremely simple implementation, we flush and recreate the draw items each time
         //  an invalidation happens
         m_drawItems.clear();
@@ -23,7 +24,8 @@ namespace Hop {
         auto vtxArray = VertexArray::Create();
 
         // Vertex Buffer
-        std::vector<glm::vec3> positions = GetPositions();
+        std::vector<glm::vec3> positions;
+        GetPositions(positions);
         glm::mat4 worldMatrix = ComputeLocalToWorldMatrix();
         for (auto &pos : positions) {
             auto pos_ = worldMatrix * glm::vec4(pos, 1.0);
@@ -44,7 +46,8 @@ namespace Hop {
         vtxBuffer->SetLayout({{ShaderDataType::Float3, "a_Position"}});
 
         // Index Buffer
-        auto indices = GetIndices();
+        std::vector<uint32_t>indices;
+        GetIndices(indices);
 
         std::shared_ptr<IndexBuffer> idxBuffer = IndexBuffer::Create(
                 indices.data(),

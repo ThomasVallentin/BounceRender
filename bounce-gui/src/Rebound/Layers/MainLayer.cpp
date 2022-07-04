@@ -18,8 +18,22 @@
 
 namespace Rebound {
 
-    MainLayer::MainLayer() {
-    }
+    // TODO: Should be reworked and be integrated in the viewport widget
+    class CameraObserver : public Observer {
+    public:
+        CameraObserver(RenderViewWidget* renderView)
+                : m_renderView(renderView) {}
+
+        void Notified(Notice *notice) override {
+            if  (m_renderView->IsInteractive())
+                m_renderView->Restart();
+        }
+
+    private:
+        RenderViewWidget* m_renderView;
+    };
+
+    MainLayer::MainLayer() = default;
 
     void MainLayer::OnAttach() {
         m_camera = std::make_shared<Camera>( 50.0f, 1280.0f / 720.0f, 0.1f, 10000.0f);
@@ -29,19 +43,29 @@ namespace Rebound {
         auto newScene = Scene::New();
         m_scene.reset(newScene);
 
-        // Initialize render scene
-        auto renderDelegate = new Hop::RenderDelegate();
-        renderDelegate->SetRenderScene(new RenderScene(renderDelegate));
-        m_renderDelegate.reset(renderDelegate);
+        // Configure the scene hierarchy widget
+        m_sceneHierarchyWid.SetScene(m_scene);
 
+        // Configure the viewport
+        m_vpRenderDelegate = std::make_shared<Hop::RenderDelegate>();
+        m_vpRenderDelegate->SetRenderScene(new RenderScene(m_vpRenderDelegate.get()));
         auto spec = new Hop::FrameBufferSpec{1280, 720,
                                              Hop::FrameBufferTextureFormat::RGBA8,
                                              Hop::FrameBufferTextureFormat::Depth,
                                              1};
-        m_renderDelegate->SetFrameBuffer(m_renderDelegate->CreateFrameBuffer(spec));
+        m_vpRenderDelegate->SetFrameBuffer(m_vpRenderDelegate->CreateFrameBuffer(spec));
 
-        // Setup scene hierarchy widget
-        m_sceneHierarchyWid.SetScene(m_scene);
+        // Configure the RenderView
+        auto rdRenderDelegate = std::make_shared<BncRenderDelegate>();
+        rdRenderDelegate->SetRenderScene(new RenderScene(rdRenderDelegate.get()));
+        rdRenderDelegate->SetFrameBuffer(
+                rdRenderDelegate->CreateFrameBuffer(new FrameBufferSpec{500, 500}));
+        m_renderView.SetRenderDelegate(rdRenderDelegate);
+        m_renderView.SetCamera(m_camera);
+
+        // Connect the camera to a render invalidation
+        m_camObserver = new CameraObserver(&m_renderView);
+        Notifier<Camera*>::RegisterObserver(m_camera.get(), m_camObserver);
     }
 
     void MainLayer::OnDetach() {
@@ -50,7 +74,7 @@ namespace Rebound {
 
     void MainLayer::OnUpdate() {
         // Updating frame buffer size if the viewport size has changed
-        auto frameBuffer = m_renderDelegate->GetFrameBuffer();
+        auto frameBuffer = m_vpRenderDelegate->GetFrameBuffer();
         FrameBufferSpec *spec = frameBuffer->GetSpecifications();
         if ((uint32_t) m_viewportWidth != spec->width ||
             (uint32_t) m_viewportHeight != spec->height) {
@@ -60,8 +84,8 @@ namespace Rebound {
                                 (uint32_t) m_viewportHeight);
         }
 
-        m_renderDelegate->GetRenderScene()->Sync();
-        m_renderDelegate->Render(m_camera.get());
+        m_vpRenderDelegate->GetRenderScene()->Sync();
+        m_vpRenderDelegate->Render(m_camera.get());
     }
 
     void MainLayer::OnEvent(Event &event) {
@@ -73,11 +97,13 @@ namespace Rebound {
     }
 
     void MainLayer::OnImGuiRender() {
+        ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImGui::GetStyleColorVec4(ImGuiCol_TitleBg));
+
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
 
         // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         // because it would be confusing to have two docking targets within each others.
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->WorkPos);
         ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -85,8 +111,12 @@ namespace Rebound {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        window_flags |= ImGuiWindowFlags_NoTitleBar |
+                        ImGuiWindowFlags_NoCollapse |
+                        ImGuiWindowFlags_NoResize |
+                        ImGuiWindowFlags_NoMove |
+                        ImGuiWindowFlags_NoBringToFrontOnFocus |
+                        ImGuiWindowFlags_NoNavFocus;
 
         ImGui::Begin("MainDockSpace", nullptr, window_flags);
 
@@ -97,8 +127,7 @@ namespace Rebound {
         ImGuiID dockspace_id = ImGui::GetID("MainDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
-        if (ImGui::BeginMenuBar()) {
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0, 4.0f));
+        if (ImGui::BeginMainMenuBar()) {
 
             if(ImGui::BeginMenu("File")) {
 
@@ -127,11 +156,12 @@ namespace Rebound {
                 ImGui::EndMenu(); // View
             }
 
-            ImGui::EndMenuBar(); // Main menu bar
-            ImGui::PopStyleVar();
+            ImGui::EndMainMenuBar(); // Main menu bar
         }
 
         ImGui::End(); // MainDockSpace
+
+        ImGui::PopStyleColor();
 
         // Render Scene Hierarchy widget
         m_sceneHierarchyWid.OnImGuiRender();
@@ -162,18 +192,18 @@ namespace Rebound {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 4));
         if (ImGui::BeginMenuBar()) {
 
-            Hop::RenderHints renderHints = m_renderDelegate->GetRenderHints();
+            Hop::RenderHints renderHints = m_vpRenderDelegate->GetRenderHints();
             if (ImGui::BeginMenu("Display mode")) {
 
                 if (ImGui::MenuItem("Wireframe", nullptr,
                                     renderHints.displayMode == Hop::DisplayMode::Wireframe)) {
                     renderHints.displayMode = Hop::DisplayMode::Wireframe;
-                    m_renderDelegate->SetRenderHints(renderHints);
+                    m_vpRenderDelegate->SetRenderHints(renderHints);
                 }
                 if (ImGui::MenuItem("Shaded", nullptr,
                                     renderHints.displayMode == Hop::DisplayMode::SmoothShaded)) {
                     renderHints.displayMode = Hop::DisplayMode::SmoothShaded;
-                    m_renderDelegate->SetRenderHints(renderHints);
+                    m_vpRenderDelegate->SetRenderHints(renderHints);
                 }
 
                 ImGui::EndMenu(); // Display Mode
@@ -183,7 +213,7 @@ namespace Rebound {
             ImGui::EndMenuBar();
         }
 
-        uint64_t textureID = m_renderDelegate->GetFrameBuffer()->GetColorAttachmentID();
+        uint64_t textureID = std::dynamic_pointer_cast<Hop::FrameBuffer>(m_vpRenderDelegate->GetFrameBuffer())->GetColorAttachmentID();
         ImGui::Image(reinterpret_cast<void *>(textureID),
                      ImVec2(m_viewportWidth, m_viewportHeight),
                      ImVec2{0, 1}, ImVec2{1, 0});
@@ -191,7 +221,10 @@ namespace Rebound {
         ImGui::End();
         ImGui::PopStyleVar();
 
-//        ImGui::ShowDemoWindow();
+        // Render Attribute View widget
+        m_renderView.OnImGuiRender();
+
+        ImGui::ShowDemoWindow();
     }
 
     void MainLayer::NewScene() {
@@ -200,8 +233,9 @@ namespace Rebound {
         auto scene = Scene::New();
         m_scene.reset(scene);
 
-        // Remove the scene from the render delegate / render scene
-        m_renderDelegate->GetRenderScene()->UnbindScene();
+        // Remove the scene from the render delegates / render scenes
+        m_vpRenderDelegate->GetRenderScene()->UnbindScene();
+        m_renderView.GetRenderDelegate()->GetRenderScene()->UnbindScene();
 
         // Reset the scene hierarchy widget
         m_sceneHierarchyWid.SetScene(m_scene);
@@ -214,8 +248,9 @@ namespace Rebound {
             RBND_INFO("Scene %s opened successfully !", name.c_str());
             m_scene.reset(scene);
 
-            // Update render scene from new scene data
-            m_renderDelegate->GetRenderScene()->BindScene(m_scene.get());
+            // Update render scenes from new scene data
+            m_vpRenderDelegate->GetRenderScene()->BindScene(m_scene.get());
+            m_renderView.GetRenderDelegate()->GetRenderScene()->BindScene(m_scene.get());
 
             // Reset the scene hierarchy widget
             m_sceneHierarchyWid.SetScene(m_scene);

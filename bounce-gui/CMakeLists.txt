@@ -20,7 +20,7 @@ add_executable(Rebound main.cpp
         ${Rebound_SOURCES}
         ${ImGui_SOURCES})
 target_include_directories(Rebound PUBLIC
-#        BounceRender
+        BounceRender
         ${Rebound_INCLUDE_DIR}
         ${GLFW_INCLUDE_DIR}
         ${GLAD_INCLUDE_DIR}
@@ -28,12 +28,10 @@ target_include_directories(Rebound PUBLIC
         OpenGL::GL
         Boost::boost)
 target_link_libraries(Rebound PUBLIC
-#        BounceRender
+        BounceRender
         C:/dev/BounceRender/dependencies/boost_1_76_0/stage/x64/lib/libboost_filesystem-vc142-mt-gd-x64-1_76.lib
         ${GLFW_LIBRARY}
         ${GLAD_LIBRARIES}
         glm::glm
         OpenGL::GL
         Boost::boost)
-
-target_link_options(Rebound PUBLIC /NODEFAULTLIB:MSVCRT)

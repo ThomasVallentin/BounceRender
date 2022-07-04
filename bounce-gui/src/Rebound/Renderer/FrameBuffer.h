@@ -31,7 +31,6 @@ namespace Rebound {
 
         virtual void Resize(const uint32_t &width, const uint32_t &height) = 0;
 
-        virtual uint32_t GetColorAttachmentID() const = 0;
         inline FrameBufferSpec* GetSpecifications() const { return m_spec; }
 
     private:

@@ -2,7 +2,6 @@
 // Created by tvallentin on 07/03/2022.
 //
 
-#include "embree3/rtcore.h"
 
 #include "Raytracer.h"
 
@@ -11,40 +10,72 @@
 #include "Scene.h"
 #include "BSDF.h"
 #include "Sampling.h"
+#include "Logging.h"
 
+#include <embree3/rtcore.h>
+
+#include <tbb/parallel_for.h>
 
 namespace Bounce {
 
+    void Raytracer::Stop() {
+        if(m_status == IntegratorState::RUNNING)
+            m_nextStatus = IntegratorState::STOPPED;
+    }
 
     void Raytracer::Render(float *pixels,
                            const unsigned int &width,
                            const unsigned int &height,
-                           const Camera *camera) const {
-        for (int x = 0; x < width; x++)
-            for (int y = 0; y < height; y++)
-                RenderPixel(x, y, pixels, width, height, camera);
+                           const unsigned int &samples,
+                           const Camera *camera) {
+
+        m_status = IntegratorState::RUNNING;
+
+        tbb::parallel_for(tbb::blocked_range<uint32_t>(0, samples),
+                          [&](const tbb::blocked_range<uint32_t> &range){
+
+            for (uint32_t sample=range.begin() ; sample < range.end() ; sample++)
+                for (int y = 0; y < height; y++)
+                    for (int x = 0; x < width; x++) {
+
+                        if (m_nextStatus == IntegratorState::STOPPED) {
+                            return;
+                        }
+
+                        RenderPixel(x, y,
+                                    sample,
+                                    pixels,
+                                    width, height,
+                                    camera);
+                    }
+        });
+
+        m_status = IntegratorState::STOPPED;
+        m_nextStatus = IntegratorState::NONE;
     }
 
-
-    void Raytracer::RenderPixel(unsigned int x,
-                                unsigned int y,
+    void Raytracer::RenderPixel(const uint32_t &x,
+                                const uint32_t &y,
+                                const uint32_t &sampleNum,
                                 float *pixels,
                                 unsigned int width,
                                 unsigned int height,
                                 const Camera *camera) const {
-        int nSample = 60;
-        Color3f L(0);
-        for (int s = 0; s < nSample; s++) {
-            // Generate camera ray
-            Ray ray;
-            Vec2f sample = (Vec2f(x, y) + RandomVector2(-0.5, 0.5)) / Vec2f(width, height);
-            float apertureMultiplier = camera->Sample(sample, ray);
-
-            L += ComputeIllumination(ray) * apertureMultiplier;
-        }
-        L /= (float) nSample;
-
         const unsigned int index = (x + y * width) * 3;
+        Color3f L(0);
+
+        // Generate camera ray
+        Ray ray;
+        Vec2f sample = (Vec2f(x, y) + RandomVector2(-0.5, 0.5)) / Vec2f(width, height);
+        float apertureMultiplier = camera->Sample(sample, ray);
+
+        L += ComputeIllumination(ray) * apertureMultiplier;
+
+        // Accumulate L inside the pixels
+        L = (Vec3f(pixels[index],
+                   pixels[index + 1],
+                   pixels[index + 2]) * (float) sampleNum + L) / (sampleNum + 1.0f);
+
         pixels[index] = L.x;
         pixels[index + 1] = L.y;
         pixels[index + 2] = L.z;
@@ -94,7 +125,6 @@ namespace Bounce {
         ray = Ray(ComputeHitPoint(ray) + N * 10e-4, wi);
 
         return f * ComputeIllumination(ray, depth) * std::abs(wi.dot(N)) / pdf;
-
 
     }
 

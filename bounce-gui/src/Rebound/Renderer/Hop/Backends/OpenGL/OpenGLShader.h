@@ -21,6 +21,7 @@ namespace Hop {
         void Unbind() const override;
         inline bool IsValid() const override { return (m_programId != 0); }
 
+        void SetInt(const std::string &name, const int &value) const override;
         void SetFloat(const std::string &name, const float &value) const override;
         void SetFloat3(const std::string &name, const glm::vec3 &value) const override;
         void SetMat4(const std::string &name, const glm::mat4 &value) const override;

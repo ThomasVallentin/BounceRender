@@ -52,8 +52,8 @@ namespace Rebound {
     }
 
     void RenderScene::Sync() {
-        for (const auto &[entityHandle,
-                          invalidation]: m_invalidations) {
+        RenderSharedData *sharedData = m_renderDelegate->GetSharedData();
+        for (const auto &[entityHandle, invalidation]: m_invalidations) {
             // Entity deleted case
             if (invalidation.type & EntityInvalidationType::Deleted) {
                 DeleteRenderEntity(entityHandle);
@@ -68,7 +68,7 @@ namespace Rebound {
                 if (rIndexIt != m_renderIndex.end()) {
                     RBND_DEBUG("Synchronizing RenderEntity \"%s\"",
                                m_scene->EntityFromHandle(rIndexIt->first).GetName().c_str());
-                    rIndexIt->second->Sync(invalidation);
+                    rIndexIt->second->Sync(invalidation, sharedData);
                 }
             }
         }
@@ -113,7 +113,8 @@ namespace Rebound {
             RenderEntity *rEntity = m_renderDelegate->CreateRenderEntity(handle);
 
             if (rEntity) {
-                rEntity->Sync({ EntityInvalidationType::Added } );
+                rEntity->Sync({ EntityInvalidationType::Added },
+                              m_renderDelegate->GetSharedData());
                 m_renderIndex[handle] = rEntity;
                 return true;
             }
@@ -184,6 +185,7 @@ namespace Rebound {
                 }
 
                 // If there are some modified attributes left, we schedule a complete invalidation
+                // of the current entity
                 if (!attributes.empty()) {
                     m_renderscene->OnEntityInvalidated(entity.GetHandle(),
                                                        { EntityInvalidationType::CompleteInvalidation,

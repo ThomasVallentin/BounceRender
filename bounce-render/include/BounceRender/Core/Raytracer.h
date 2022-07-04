@@ -12,6 +12,13 @@
 
 namespace Bounce {
 
+    enum class IntegratorState {
+        NONE = 0,
+        RUNNING,
+        STOPPED,
+        PAUSE
+    };
+
     class Raytracer {
     public:
         Raytracer() : scene(nullptr) {};
@@ -21,10 +28,15 @@ namespace Bounce {
         void Render(float *pixels,
                     const unsigned int &width,
                     const unsigned int &height,
-                    const Camera *camera) const;
+                    const unsigned int &samples,
+                    const Camera *camera);
+
+        void Stop();
 
     protected:
-        void RenderPixel(unsigned int x, unsigned int y,
+        void RenderPixel(const uint32_t &x,
+                         const uint32_t &y,
+                         const uint32_t &sampleNum,
                          float *pixels,
                          unsigned int width,
                          unsigned int height,
@@ -33,6 +45,9 @@ namespace Bounce {
         Color3f ComputeIllumination(Ray &ray, int depth=0) const;
 
         Scene *scene;
+
+        IntegratorState m_status = IntegratorState::STOPPED;
+        IntegratorState m_nextStatus = IntegratorState::NONE;
     };
 
 }

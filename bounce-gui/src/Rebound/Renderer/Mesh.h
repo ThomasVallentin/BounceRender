@@ -18,9 +18,9 @@ namespace Rebound {
                    const MaterialHandle& materialHandle) :
                 RenderEntity(entity, materialHandle) {}
 
-        std::vector<glm::vec3> GetPositions() const;
-        std::vector<glm::vec3> GetNormals() const;
-        std::vector<uint32_t> GetIndices() const;
+        bool GetPositions(std::vector<glm::vec3> &positions) const;
+        bool GetNormals(std::vector<glm::vec3> &normals) const;
+        bool GetIndices(std::vector<uint32_t> &indices) const;
     };
 
 }

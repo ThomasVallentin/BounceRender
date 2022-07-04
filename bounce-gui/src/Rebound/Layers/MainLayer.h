@@ -10,6 +10,7 @@
 
 #include "Rebound/Widgets/SceneHierarchy.h"
 #include "Rebound/Widgets/AttributeView.h"
+#include "Rebound/Widgets/RenderView.h"
 
 #include "Rebound/Events/ApplicationEvent.h"
 
@@ -21,6 +22,8 @@
 
 
 namespace Rebound {
+
+    class CameraObserver;
 
     class MainLayer : public Layer {
     public:
@@ -42,6 +45,7 @@ namespace Rebound {
 
         SceneHierarchyWidget m_sceneHierarchyWid;
         AttributeViewWidget m_attributeViewWid;
+        RenderViewWidget m_renderView;
 
         // WARNING(tvallentin): Camera used to be a simple attribute instead of
         // a shared pointer to a Camera but this caused crashes when
@@ -49,11 +53,12 @@ namespace Rebound {
         // We'll deal with this when we'll start implementing the Scene/Entity system,
         // since then let's keep it that way.
         std::shared_ptr<Camera> m_camera;
+        CameraObserver *m_camObserver;
 
         float m_viewportWidth, m_viewportHeight;
 
         std::shared_ptr<Scene> m_scene;
-        std::shared_ptr<Hop::RenderDelegate> m_renderDelegate;
+        std::shared_ptr<Hop::RenderDelegate> m_vpRenderDelegate;
     };
 
 }

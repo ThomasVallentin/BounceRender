@@ -103,6 +103,11 @@ namespace Hop {
         glUseProgram(0);
     }
 
+    void OpenGLShader::SetInt(const std::string &name, const int &value) const {
+        GLint location = glGetUniformLocation(m_programId, name.c_str());
+        glUniform1i(location, value);
+    }
+
     void OpenGLShader::SetFloat(const std::string &name, const float &value) const {
         GLint location = glGetUniformLocation(m_programId, name.c_str());
         glUniform1f(location, value);

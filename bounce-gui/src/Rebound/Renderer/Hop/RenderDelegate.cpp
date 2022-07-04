@@ -76,6 +76,8 @@ namespace Hop {
     bool RenderDelegate::Render(Rebound::Camera *camera) {
         auto frameBuffer = std::dynamic_pointer_cast<FrameBuffer>(GetFrameBuffer());
 
+        // TODO: Should be extracted to be bale to render vertex arrays using the correct RenderAPI
+        //  without having to go through the whole RenderDelegate process
         frameBuffer->Bind();
         switch (GetAPI()) {
             case RenderAPI::None:    break;  // TODO: Add warning

@@ -19,7 +19,8 @@ namespace Hop {
                    const Rebound::MaterialHandle& handle) :
                 Rebound::RenderMesh(entity, handle) {}
 
-        void Sync(const Rebound::EntityInvalidation &invalidation) override;
+        void Sync(const Rebound::EntityInvalidation &invalidation,
+                  Rebound::RenderSharedData* sharedData) override;
 
     };
 

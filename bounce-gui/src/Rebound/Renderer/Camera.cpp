@@ -5,10 +5,7 @@
 #include "Camera.h"
 #include "Rebound/Core/Logging.h"
 #include "Rebound/Core/Inputs.h"
-
-#include <GLFW/glfw3.h>
-
-#include <glm/gtx/string_cast.hpp>
+#include "Rebound/Core/Notifier.h"
 
 namespace Rebound {
 
@@ -23,17 +20,17 @@ namespace Rebound {
     }
 
     void Camera::OnUpdate() {
-        glm::vec2 mousePos = Rebound::Input::GetMousePosition();
+        glm::vec2 mousePos = Input::GetMousePosition();
 
         // Only editing the camera when alt is pressed
-        if (Rebound::Input::IsKeyPressed(Rebound::KeyCode::Left_alt)) {
+        if (Input::IsKeyPressed(KeyCode::Left_alt)) {
             glm::vec2 delta = mousePos - m_prevMousePos;
 
-            if (Rebound::Input::IsMouseButtonPressed(Rebound::MouseButton::ButtonMiddle))
+            if (Input::IsMouseButtonPressed(MouseButton::ButtonMiddle))
                 MousePan(delta.x, delta.y);
-            else if (Rebound::Input::IsMouseButtonPressed(Rebound::MouseButton::ButtonLeft))
+            else if (Input::IsMouseButtonPressed(MouseButton::ButtonLeft))
                 MouseRotate(delta.x, delta.y);
-            else if (Rebound::Input::IsMouseButtonPressed(Rebound::MouseButton::ButtonRight))
+            else if (Input::IsMouseButtonPressed(MouseButton::ButtonRight))
                 MouseZoom(delta.x);
         }
 
@@ -41,7 +38,6 @@ namespace Rebound {
     }
 
     void Camera::MousePan(const float &deltaX, const float &deltaY) {
-        RBND_DEBUG("Panning camera ! Delta : %f %f", deltaX, deltaY);
         m_focalPoint -= GetSideDirection() * deltaX * 3.0f * m_distance / m_viewportWidth;
         m_focalPoint += GetUpDirection() * deltaY * 3.0f * m_distance / m_viewportWidth;
 
@@ -49,27 +45,23 @@ namespace Rebound {
     }
 
     void Camera::MouseRotate(const float &deltaX, const float &deltaY) {
-        RBND_DEBUG("Rotating camera ! Delta : %f %f", deltaX, deltaY);
-        float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
-        m_yaw += deltaX * 0.01f;
-        m_pitch += deltaY * 0.01f;
+        m_yaw -= deltaX * 0.01f;
+        m_pitch -= deltaY * 0.01f;
         UpdateView();
     }
 
     void Camera::MouseZoom(const float &deltaX) {
-        RBND_DEBUG("Zooming camera ! Delta : %f", deltaX);
         m_distance -= deltaX * 0.003f * m_distance;
         UpdateView();
     }
 
-    void Camera::OnEvent(Rebound::Event &event) {
-        Rebound::EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<Rebound::MouseScrolledEvent>(BIND_EVENT_FUNC(Camera::OnMouseScrollEvent));
-        dispatcher.Dispatch<Rebound::KeyPressedEvent>(BIND_EVENT_FUNC(Camera::OnKeyPressedEvent));
+    void Camera::OnEvent(Event &event) {
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FUNC(Camera::OnMouseScrollEvent));
+        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNC(Camera::OnKeyPressedEvent));
     }
 
-    bool Camera::OnMouseScrollEvent(Rebound::MouseScrolledEvent &event) {
-        RBND_DEBUG("Mouse scrolled ! Delta=(%f,%f)", event.GetOffsetX(), event.GetOffsetY());
+    bool Camera::OnMouseScrollEvent(MouseScrolledEvent &event) {
         m_distance -= event.GetOffsetY() * 0.3f * m_distance;
 
         UpdateView();
@@ -77,14 +69,13 @@ namespace Rebound {
         return false;
     }
 
-    bool Camera::OnKeyPressedEvent(Rebound::KeyPressedEvent &event) {
-        RBND_DEBUG("Key  %d pressed !", event.GetKey());
+    bool Camera::OnKeyPressedEvent(KeyPressedEvent &event) {
         // Pseudo focus that reset the camera distance and focal point
-        if (event.GetKey() == Rebound::KeyCode::F) {
+        if (event.GetKey() == KeyCode::F) {
             m_focalPoint = {0.0f, 0.0f, 0.0f};
             m_distance = 5.0f;
-            m_pitch = 0.5f;
-            m_yaw = -0.5f;
+            m_pitch = -0.5f;
+            m_yaw = 0.5f;
 
             UpdateView();
         }
@@ -112,7 +103,7 @@ namespace Rebound {
     }
 
     glm::quat Camera::GetOrientation() const {
-        return {glm::vec3(-m_pitch, -m_yaw, m_roll) };
+        return {glm::vec3(m_pitch, m_yaw, m_roll) };
     }
 
     glm::vec3 Camera::ComputePosition() const {
@@ -120,19 +111,39 @@ namespace Rebound {
     }
 
     void Camera::UpdateView() {
-        m_position = ComputePosition();
+        auto oldMatrix = m_viewMatrix;
 
+        m_position = ComputePosition();
         glm::quat orientation = GetOrientation();
         m_viewMatrix = glm::translate(glm::mat4(1.0f), m_position) * glm::toMat4(orientation);
         m_viewMatrix = glm::inverse(m_viewMatrix);
+
+        if (oldMatrix != m_viewMatrix) {
+            Notifier<Camera *>::Notify(this, new Notice);
+        }
     }
 
     void Camera::UpdateProjection() {
+        auto oldMatrix = m_projectionMatrix;
+
         m_projectionMatrix = glm::perspective(glm::radians(m_fov),
                                               m_aspectRatio,
                                               m_nearClip,
                                               m_farClip);
+
+        if (oldMatrix != m_projectionMatrix) {
+            Notifier<Camera *>::Notify(this, new Notice);
+        }
     }
 
-}
+    float Camera::GetFov() const {
+        return m_fov;
+    }
 
+    glm::vec3 Camera::GetEulerAngles() const {
+        return {m_pitch, m_yaw, m_roll};
+    }
+
+    DEFINE_NOTIFIER_SENDER_TYPE(Camera*);
+
+}

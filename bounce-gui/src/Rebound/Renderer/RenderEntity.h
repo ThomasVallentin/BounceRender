@@ -16,6 +16,7 @@
 namespace Rebound {
 
     struct EntityInvalidation;
+    class RenderSharedData;
 
     class RenderEntity {
     public:
@@ -26,7 +27,8 @@ namespace Rebound {
 
         virtual ~RenderEntity() = default;
 
-        virtual void Sync(const EntityInvalidation& invalidation) = 0;
+        virtual void Sync(const EntityInvalidation& invalidation,
+                          RenderSharedData* sharedData) = 0;
 
         inline std::vector<std::shared_ptr<DrawItem>> GetDrawItems() const { return m_drawItems; }
 

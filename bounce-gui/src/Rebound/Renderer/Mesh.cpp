@@ -9,19 +9,19 @@
 
 namespace Rebound {
 
-    std::vector<glm::vec3> RenderMesh::GetPositions() const {
+    bool RenderMesh::GetPositions(std::vector<glm::vec3> &positions) const {
         auto mesh = m_entity.As<Mesh>();
-        return mesh.GetPositions();
+        return mesh.GetPositions(positions);
     }
 
-    std::vector<glm::vec3> RenderMesh::GetNormals() const {
+    bool RenderMesh::GetNormals(std::vector<glm::vec3> &normals) const {
         auto mesh = m_entity.As<Mesh>();
-        return mesh.GetNormals();
+        return mesh.GetNormals(normals);
     }
 
-    std::vector<uint32_t> RenderMesh::GetIndices() const {
+    bool RenderMesh::GetIndices(std::vector<uint32_t> &indices) const {
         auto mesh = m_entity.As<Mesh>();
-        return mesh.GetIndices();
+        return mesh.GetIndices(indices);
     }
 
 }

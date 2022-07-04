@@ -20,10 +20,17 @@ namespace Rebound {
     class FrameBuffer;
     struct FrameBufferSpec;
 
+    class RenderSharedData {
+    public:
+        RenderSharedData() = default;
+        virtual ~RenderSharedData() = default;
+    };
+
     class RenderDelegate {
     public:
         RenderDelegate() : m_scene(nullptr), m_defaultMaterial(nullptr) {}
         explicit RenderDelegate(RenderScene *scene) : m_scene(scene) {}
+        virtual ~RenderDelegate() = default;
 
         virtual bool Render(Camera *camera) = 0;
 
@@ -46,6 +53,8 @@ namespace Rebound {
         virtual std::shared_ptr<FrameBuffer> CreateFrameBuffer(FrameBufferSpec *spec) const = 0;
         inline std::shared_ptr<FrameBuffer> GetFrameBuffer() const { return m_frameBuffer; }
         void SetFrameBuffer(std::shared_ptr<FrameBuffer>frameBuffer);
+
+        virtual RenderSharedData *GetSharedData() const;
 
     private:
         RenderScene *m_scene;

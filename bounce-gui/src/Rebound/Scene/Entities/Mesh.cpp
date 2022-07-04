@@ -24,32 +24,26 @@ namespace Rebound {
 
     // == ATTRIBUTE ACCESSORS ==
 
-    std::vector<glm::vec3> Mesh::GetPositions() {
-        std::vector<glm::vec3> result;
+    bool Mesh::GetPositions(std::vector<glm::vec3> &result) {
         GetAttribute<std::vector<glm::vec3>>("positions", result);
-
-        return result;
+        return true;
     }
 
     void Mesh::SetPositions(const std::vector<glm::vec3> &positions) {
         SetAttribute<std::vector<glm::vec3>>("positions", positions);
     }
 
-    std::vector<glm::vec3> Mesh::GetNormals() {
-        std::vector<glm::vec3> result;
-        GetAttribute<std::vector<glm::vec3>>("normals", result);
-
-        return result;
+    bool Mesh::GetNormals(std::vector<glm::vec3> &normals) {
+        GetAttribute<std::vector<glm::vec3>>("normals", normals);
+        return true;
     }
 
     void Mesh::SetNormals(const std::vector<glm::vec3> &normals) {
         SetAttribute<std::vector<glm::vec3>>("normals", normals);
     }
 
-    std::vector<uint32_t> Mesh::GetIndices() {
-        std::vector<uint32_t> result;
-        GetAttribute<std::vector<uint32_t>>("indices", result);
-
-        return result;
+    bool Mesh::GetIndices(std::vector<uint32_t> &indices) {
+        GetAttribute<std::vector<uint32_t>>("indices", indices);
+        return true;
     }
 }

@@ -46,6 +46,8 @@ namespace Hop {
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 
+        virtual uint32_t GetColorAttachmentID() const = 0;
+
         static std::shared_ptr<FrameBuffer> Create(FrameBufferSpec *spec);
     };
 

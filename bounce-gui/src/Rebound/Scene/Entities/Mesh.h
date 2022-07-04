@@ -14,13 +14,13 @@ namespace Rebound {
 
         ENTITY_TYPE_FROM_BASES(Mesh, Xform)
 
-        std::vector<glm::vec3> GetPositions();
+        bool GetPositions(std::vector<glm::vec3> &positions);
         void SetPositions(const std::vector<glm::vec3> &positions);
 
-        std::vector<glm::vec3> GetNormals();
+        bool GetNormals(std::vector<glm::vec3> &normals);
         void SetNormals(const std::vector<glm::vec3> &normals);
 
-        std::vector<uint32_t> GetIndices();
+        bool GetIndices(std::vector<uint32_t> &indices);
         void SetIndices(const std::vector<uint32_t> &indices);
 
     protected:

@@ -2,13 +2,15 @@
 #include "Rebound/Layers/MainLayer.h"
 
 class ReboundApplication : public Rebound::Application {
-
 public:
     ReboundApplication() {
+        Bounce::InitializeBounce();
         AddLayer(new Rebound::MainLayer());
 
     };
-    ~ReboundApplication() = default;
+    ~ReboundApplication() {
+        Bounce::ReleaseBounce();
+    }
 };
 
 Rebound::Application *Rebound::CreateApplication() {

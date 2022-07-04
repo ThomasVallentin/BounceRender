@@ -10,7 +10,8 @@
 
 namespace Hop {
 
-    void RenderLine::Sync(const Rebound::EntityInvalidation &invalidation) {
+    void RenderLine::Sync(const Rebound::EntityInvalidation &invalidation,
+                          Rebound::RenderSharedData* sharedData) {
         // TODO: Extremely simple implementation, we flush the draw item each time an invalidation
         //       happens
         if (!m_drawItems.empty()) {

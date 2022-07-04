@@ -3,6 +3,7 @@ find_package(embree 3.0 REQUIRED)
 find_package(OpenImageIO REQUIRED)
 find_package(Alembic REQUIRED)
 find_package(Imath REQUIRED)
+find_package(TBB REQUIRED)
 
 # Get all source files
 file(GLOB_RECURSE SOURCES_FILES src/*.cpp)
@@ -20,7 +21,8 @@ target_link_libraries(BounceRender PUBLIC
         embree
         Alembic::Alembic
         OpenImageIO::OpenImageIO
-        Imath::Imath)
+        Imath::Imath
+        TBB::tbb)
 
 if(NOT DONT_BUILD_TESTS)
     add_executable(test_SimpleRender tests/simple_render.cpp)

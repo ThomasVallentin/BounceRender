@@ -35,4 +35,8 @@ namespace Rebound {
         m_frameBuffer = std::move(frameBuffer);
     }
 
+    RenderSharedData *RenderDelegate::GetSharedData() const {
+        return nullptr;
+    }
+
 }
